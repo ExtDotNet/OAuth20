@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Tests/" />
+  <Folder Name="/Projects/">
+    <Project Path="Projects\ExtDotNet.OAuth20.Server\ExtDotNet.OAuth20.Server.csproj" />
+  </Folder>
+  <Folder Name="/Demo/Server/" />
+  <Folder Name="/Demo/Resources/" />
+  <Folder Name="/Demo/Clients/" />
+  <Folder Name="/Demo/" />
+  <Folder Name="/Benchmarks/" />
+</Solution>
