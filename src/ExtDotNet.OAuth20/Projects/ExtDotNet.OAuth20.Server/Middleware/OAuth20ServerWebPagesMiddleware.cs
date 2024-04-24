@@ -1,9 +1,10 @@
 ﻿// Developed and maintained by ExtDotNet.
 // ExtDotNet licenses this file to you under the MIT license.
 
-using ExtDotNet.OAuth20.Server.Abstractions.Errors.Exceptions;
-using ExtDotNet.OAuth20.Server.Abstractions.Errors;
 using ExtDotNet.OAuth20.Server.Abstractions;
+using ExtDotNet.OAuth20.Server.Abstractions.Errors;
+
+using ExtDotNet.OAuth20.Server.Abstractions.Errors.Exceptions;
 using ExtDotNet.OAuth20.Server.Abstractions.WebPageBuilders;
 
 namespace ExtDotNet.OAuth20.Server.Middleware;

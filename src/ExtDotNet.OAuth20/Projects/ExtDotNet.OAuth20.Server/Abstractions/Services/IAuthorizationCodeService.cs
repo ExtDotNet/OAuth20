@@ -3,7 +3,6 @@
 
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models;
-
 using ExtDotNet.OAuth20.Server.Models.Flows.AuthorizationCode.Authorize;
 
 namespace ExtDotNet.OAuth20.Server.Abstractions.Services;

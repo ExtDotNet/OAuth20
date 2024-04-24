@@ -19,5 +19,22 @@ public abstract class RedirectResultBase : IResult
 
     public IDictionary<string, string>? QueryParameters { get; set; }
 
-    public abstract Task ExecuteAsync(HttpContext httpContext);
+    public virtual Task ExecuteAsync(HttpContext httpContext)
+    {
+        string redirectLocation;
+
+        if (QueryParameters is not null && QueryParameters.Any())
+        {
+            string queryString = string.Join("&", QueryParameters.Select(x => $"{Uri.EscapeDataString(x.Key)}={Uri.EscapeDataString(x.Value)}"));
+            redirectLocation = RedirectUri + "?" + queryString;
+        }
+        else
+        {
+            redirectLocation = RedirectUri;
+        }
+
+        httpContext.Response.Redirect(redirectLocation, false, false);
+
+        return Task.CompletedTask;
+    }
 }
