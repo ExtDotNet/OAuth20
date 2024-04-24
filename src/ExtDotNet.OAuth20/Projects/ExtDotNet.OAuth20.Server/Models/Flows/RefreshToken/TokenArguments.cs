@@ -3,7 +3,7 @@
 
 using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 
-namespace ExtDotNet.OAuth20.Server.Models.Flows.RefreshToken.Token;
+namespace ExtDotNet.OAuth20.Server.Models.Flows.RefreshToken;
 
 /// <summary>
 /// Description RFC6749: https://datatracker.ietf.org/doc/html/rfc6749#section-6

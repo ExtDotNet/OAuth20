@@ -5,7 +5,7 @@ using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models;
 
-using ExtDotNet.OAuth20.Server.Models.Flows.Implicit.Mixed;
+using ExtDotNet.OAuth20.Server.Models.Flows.Implicit;
 
 namespace ExtDotNet.OAuth20.Server.Flows;
 

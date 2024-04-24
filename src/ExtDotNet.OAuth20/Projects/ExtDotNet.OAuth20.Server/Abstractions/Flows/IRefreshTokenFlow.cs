@@ -3,7 +3,7 @@
 
 using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Domain;
-using ExtDotNet.OAuth20.Server.Models.Flows.RefreshToken.Token;
+using ExtDotNet.OAuth20.Server.Models.Flows.RefreshToken;
 
 namespace ExtDotNet.OAuth20.Server.Flows;
 
