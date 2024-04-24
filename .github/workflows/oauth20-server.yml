@@ -1,0 +1,31 @@
+name: ExtDotNet.OAuth20.Server
+
+env:
+  SLN_PATH: 'src/ExtDotNet.OAuth20'
+
+on:
+  push:
+    paths:
+    - 'src/ExtDotNet.OAuth20/Projects/ExtDotNet.OAuth20.Server/**'
+    - '.github/workflows/oauth20-server.yml'
+
+jobs:
+
+  build:
+    runs-on: [ ubuntu-latest ]
+    strategy:
+      matrix:
+        dotnet-version: [ '8.0.x' ]
+    env:
+      PROJ_FILE_PATH: 'Projects/ExtDotNet.OAuth20.Server/ExtDotNet.OAuth20.Server.csproj'
+    steps:
+    - name: Checking Out a Repository
+      uses: actions/checkout@v3
+    - name: Setup .NET ${{ matrix.dotnet-version }} SDK 
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+    - name: Install Dependencies
+      run: dotnet restore '${{ env.SLN_PATH }}/${{ env.PROJ_FILE_PATH }}'
+    - name: Build .NET Project
+      run: dotnet build -c Release --no-restore '${{ env.SLN_PATH }}/${{ env.PROJ_FILE_PATH }}'

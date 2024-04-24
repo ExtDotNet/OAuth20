@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34707.107
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{30AABED6-25F2-4C4F-AA8A-003176A51CAA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{57D1F4B3-78F8-42F9-BC51-2E0CEC1CDE38}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{57EF07FF-C91E-4CE3-AC8C-DFD5B7BC7175}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{F41CFCB6-5468-463E-BACF-56A03F4A6D24}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{73E0CF28-C0B6-40DE-B967-426C75C1A8BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{6D0684E0-F497-4B50-B1E1-885440AAC86E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{049580A0-4F2D-47BE-9A22-F12B7C4B1205}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtDotNet.OAuth20.Server", "Projects\ExtDotNet.OAuth20.Server\ExtDotNet.OAuth20.Server.csproj", "{36B71436-45BB-4D12-9D4B-906BA959CDC6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36B71436-45BB-4D12-9D4B-906BA959CDC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36B71436-45BB-4D12-9D4B-906BA959CDC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36B71436-45BB-4D12-9D4B-906BA959CDC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36B71436-45BB-4D12-9D4B-906BA959CDC6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{57EF07FF-C91E-4CE3-AC8C-DFD5B7BC7175} = {57D1F4B3-78F8-42F9-BC51-2E0CEC1CDE38}
+		{F41CFCB6-5468-463E-BACF-56A03F4A6D24} = {57D1F4B3-78F8-42F9-BC51-2E0CEC1CDE38}
+		{73E0CF28-C0B6-40DE-B967-426C75C1A8BE} = {57D1F4B3-78F8-42F9-BC51-2E0CEC1CDE38}
+		{36B71436-45BB-4D12-9D4B-906BA959CDC6} = {6D0684E0-F497-4B50-B1E1-885440AAC86E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1647C8A9-643A-475D-8279-525FB09DDA66}
+	EndGlobalSection
+EndGlobal
