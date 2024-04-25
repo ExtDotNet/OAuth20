@@ -33,25 +33,26 @@ public class DefaultEndUserService : IEndUserService
 
         if (username is null) throw new AccessDeniedException($"It isn't specified the {username} (Probably the user isn't authenticated).", state);
 
-        return await GetEndUserAsync(username);
+        return await GetEndUserAsync(username).ConfigureAwait(false);
     }
 
     public async Task<EndUser?> GetEndUserAsync(string username)
     {
-        return await _endUserDataSource.GetEndUserAsync(username);
+        return await _endUserDataSource.GetEndUserAsync(username).ConfigureAwait(false);
     }
 
     public async Task<EndUser?> GetEndUserAsync(string username, string password)
     {
-        string? passwordHash = await _passwordHashingService.GetPasswordHashAsync(password);
+        string? passwordHash = await _passwordHashingService.GetPasswordHashAsync(password).ConfigureAwait(false);
 
-        return await _endUserDataSource.GetEndUserAsync(username, passwordHash);
+        return await _endUserDataSource.GetEndUserAsync(username, passwordHash).ConfigureAwait(false);
     }
 
-    public bool IsAuthenticated()
+    public async Task<bool> IsAuthenticatedAsync()
     {
-        var authenticationResult = _httpContextAccessor.HttpContext?.AuthenticateAsync().GetAwaiter().GetResult();
+        var authenticationResult = await (_httpContextAccessor.HttpContext?.AuthenticateAsync() ?? Task.FromResult(AuthenticateResult.NoResult()))
+            .ConfigureAwait(false);
 
-        return !(authenticationResult?.Succeeded != true);
+        return authenticationResult.Succeeded;
     }
 }

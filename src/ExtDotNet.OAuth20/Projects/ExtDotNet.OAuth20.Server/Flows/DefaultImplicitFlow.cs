@@ -2,6 +2,7 @@
 // ExtDotNet licenses this file to you under the MIT license.
 
 using ExtDotNet.OAuth20.Server.Abstractions.Errors;
+using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models;
@@ -60,33 +61,34 @@ public class DefaultImplicitFlow : IImplicitFlow
                 "Missing request parameter: [state]");
         }
 
-        IResult result = await AuthorizeAsync(authArgs, endUser, client, scopeResult);
+        IResult result = await AuthorizeAsync(authArgs, endUser, client, scopeResult).ConfigureAwait(false);
 
         return result;
     }
 
     public async Task<IResult> AuthorizeAsync(AuthorizeArguments args, EndUser endUser, Client client, ScopeResult scopeResult)
     {
-        var flow = await _flowService.GetFlowAsync<IImplicitFlow>();
+        var flow = await _flowService.GetFlowAsync<IImplicitFlow>().ConfigureAwait(false);
         if (flow is null)
         {
             return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.ServerError, args.State, "Cannot determine the flow.");
         }
 
-        bool flowAvailable = await _clientService.IsFlowAvailableForClientAsync(client, flow);
+        bool flowAvailable = await _clientService.IsFlowAvailableForClientAsync(client, flow).ConfigureAwait(false);
         if (!flowAvailable)
         {
             return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.InvalidRequest, args.State, $"The selected flow is not available to the Client with [client_id] = [{args.ClientId}].");
         }
 
-        string redirectUri = await _clientService.GetRedirectUriAsync(args.RedirectUri, flow, client, args.State);
+        string redirectUri = await _clientService.GetRedirectUriAsync(args.RedirectUri, flow, client, args.State).ConfigureAwait(false);
 
         AccessTokenResult accessToken = await _accessTokenService.GetAccessTokenAsync(
-            scopeResult.IssuedScope,
-            scopeResult.IssuedScopeDifferent,
-            client,
-            redirectUri,
-            endUser);
+                scopeResult.IssuedScope,
+                scopeResult.IssuedScopeDifferent,
+                client,
+                redirectUri,
+                endUser)
+            .ConfigureAwait(false);
 
         TokenResult result = TokenResult.Create(
             redirectUri: redirectUri,

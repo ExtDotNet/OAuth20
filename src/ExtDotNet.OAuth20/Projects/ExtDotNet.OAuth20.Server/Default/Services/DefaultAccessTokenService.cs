@@ -45,11 +45,11 @@ public class DefaultAccessTokenService : IAccessTokenService
 
     public async Task<AccessTokenResult> GetAccessTokenAsync(string issuedScope, bool issuedScopeDifferent, Client client, string? redirectUri = null, EndUser? endUser = null)
     {
-        TokenType tokenType = await _tokenProvider.GetTokenTypeAsync(client);
-        IEnumerable<Scope> scopeList = await _scopeService.GetScopeListAsync(issuedScope);
+        TokenType tokenType = await _tokenProvider.GetTokenTypeAsync(client).ConfigureAwait(false);
+        IEnumerable<Scope> scopeList = await _scopeService.GetScopeListAsync(issuedScope).ConfigureAwait(false);
 
-        string issuer = await _serverMetadataService.GetTokenIssuerAsync();
-        var additionalParameters = await _tokenTypeDataSource.GetTokenAdditionalParametersAsync(tokenType);
+        string issuer = await _serverMetadataService.GetTokenIssuerAsync().ConfigureAwait(false);
+        var additionalParameters = await _tokenTypeDataSource.GetTokenAdditionalParametersAsync(tokenType).ConfigureAwait(false);
 
         Dictionary<string, string> additionalParametersDictionary = new(additionalParameters.Count());
 
@@ -58,7 +58,7 @@ public class DefaultAccessTokenService : IAccessTokenService
             additionalParametersDictionary.Add(additionalParameter.Name, additionalParameter.Value);
         }
 
-        IEnumerable<Resource> resources = await _resourceService.GetResourcesByScopesAsync(scopeList);
+        IEnumerable<Resource> resources = await _resourceService.GetResourcesByScopesAsync(scopeList).ConfigureAwait(false);
 
         IEnumerable<string> audiences = resources.Select(x => x.Name);
 
@@ -82,7 +82,7 @@ public class DefaultAccessTokenService : IAccessTokenService
             RedirectUri = redirectUri
         };
 
-        string accessTokenValue = await _tokenProvider.GetTokenValueAsync(tokenType, tokenContext);
+        string accessTokenValue = await _tokenProvider.GetTokenValueAsync(tokenType, tokenContext).ConfigureAwait(false);
 
         AccessTokenResult accessToken = new()
         {
@@ -98,7 +98,7 @@ public class DefaultAccessTokenService : IAccessTokenService
             Type = tokenType.Name
         };
 
-        await _tokenStorage.AddAccessTokenAsync(accessToken);
+        await _tokenStorage.AddAccessTokenAsync(accessToken).ConfigureAwait(false);
 
         return accessToken;
     }

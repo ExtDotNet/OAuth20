@@ -17,6 +17,6 @@ public class HtmlPageResult : IResult
         httpContext.Response.StatusCode = StatusCodes.Status200OK;
         httpContext.Response.ContentType = "text/html";
 
-        await httpContext.Response.WriteAsync(_htmlContent);
+        await httpContext.Response.WriteAsync(_htmlContent).ConfigureAwait(false);
     }
 }

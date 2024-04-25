@@ -33,7 +33,7 @@ public class OAuth20ServerWebPagesMiddleware
 
             try
             {
-                result = await webPageBuilder!.InvokeAsync(httpContext);
+                result = await webPageBuilder!.InvokeAsync(httpContext).ConfigureAwait(false);
             }
             catch (OAuth20Exception exception)
             {
@@ -44,7 +44,7 @@ public class OAuth20ServerWebPagesMiddleware
                 throw;
             }
 
-            await result.ExecuteAsync(httpContext);
+            await result.ExecuteAsync(httpContext).ConfigureAwait(false);
         }
         else
         {

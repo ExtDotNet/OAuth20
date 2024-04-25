@@ -57,14 +57,14 @@ public class DefaultAuthorizationCodeService : IAuthorizationCodeService
             Value = authorizationCodeValue
         };
 
-        await _authorizationCodeStorage.AddAuthorizationCodeResultAsync(authorizationCode);
+        await _authorizationCodeStorage.AddAuthorizationCodeResultAsync(authorizationCode).ConfigureAwait(false);
 
         return authorizationCode.Value;
     }
 
     public async Task<AccessTokenResult> ExchangeAuthorizationCodeAsync(string code, Client client, string? redirectUri)
     {
-        AuthorizationCodeResult? authorizationCode = await _authorizationCodeStorage.GetAuthorizationCodeResultAsync(code);
+        AuthorizationCodeResult? authorizationCode = await _authorizationCodeStorage.GetAuthorizationCodeResultAsync(code).ConfigureAwait(false);
         if (authorizationCode is null)
         {
             throw new InvalidGrantException($"Authorization Code [{code}] is invalid and does not exist in the system.");
@@ -92,18 +92,20 @@ public class DefaultAuthorizationCodeService : IAuthorizationCodeService
             throw new InvalidGrantException($"Passed Redirect URI [{redirectUri}] of the Authorization Code [{code}] does not match the Redirect URI of the Authorization Code [{code}].");
         }
 
-        EndUser? endUser = await _endUserService.GetEndUserAsync(authorizationCode.Username);
+        EndUser? endUser = await _endUserService.GetEndUserAsync(authorizationCode.Username).ConfigureAwait(false);
         if (endUser is null)
         {
-            throw new InvalidOperationException($"Authorization Code [{code}] is binded to the EndUser with the username [{authorizationCode.Username}] that does not exist in the system.");
+            throw new InvalidOperationException($"Authorization Code [{code}] is bind to the EndUser with the username [{authorizationCode.Username}] that does not exist in the system.");
         }
 
-        AccessTokenResult accessToken = await _accessTokenService.GetAccessTokenAsync(
-            authorizationCode.Scope,
-            authorizationCode.IssuedScopeDifferent,
-            client,
-            authorizationCode.RedirectUri,
-            endUser);
+        AccessTokenResult accessToken = await _accessTokenService
+            .GetAccessTokenAsync(
+                authorizationCode.Scope,
+                authorizationCode.IssuedScopeDifferent,
+                client,
+                authorizationCode.RedirectUri,
+                endUser)
+            .ConfigureAwait(false);
 
         return accessToken;
     }

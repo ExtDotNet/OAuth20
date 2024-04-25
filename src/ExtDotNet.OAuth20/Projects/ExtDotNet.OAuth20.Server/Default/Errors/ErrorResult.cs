@@ -106,6 +106,6 @@ public class ErrorResult : IErrorResult
 #if DEBUG
         Debug.WriteLine(responseBody);
 #endif
-        await httpContext.Response.WriteAsync(responseBody);
+        await httpContext.Response.WriteAsync(responseBody).ConfigureAwait(false);
     }
 }

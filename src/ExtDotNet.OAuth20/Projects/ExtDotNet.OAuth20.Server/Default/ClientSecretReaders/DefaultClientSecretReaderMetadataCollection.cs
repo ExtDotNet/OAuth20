@@ -4,7 +4,7 @@
 using ExtDotNet.OAuth20.Server.Abstractions.ClientSecretReaders;
 using System.Collections.Concurrent;
 
-namespace ExtDotNet.OAuth20.Server.Default.ClientSecrets;
+namespace ExtDotNet.OAuth20.Server.Default.ClientSecretReaders;
 
 public class DefaultClientSecretReaderMetadataCollection : IClientSecretReaderMetadataCollection
 {

@@ -5,9 +5,9 @@ using ExtDotNet.OAuth20.Server.Abstractions.DataSources;
 using ExtDotNet.OAuth20.Server.Abstractions.Errors.Exceptions;
 using ExtDotNet.OAuth20.Server.Abstractions.Errors.Exceptions.Authorize;
 using ExtDotNet.OAuth20.Server.Abstractions.Errors.Exceptions.Common;
+using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Domain;
-using ExtDotNet.OAuth20.Server.Flows;
 using ExtDotNet.OAuth20.Server.Options;
 using Microsoft.Extensions.Options;
 
@@ -34,21 +34,21 @@ public class DefaultClientService : IClientService
 
     public async Task<Client?> GetClientAsync(string clientId)
     {
-        return await _clientDataSource.GetClientAsync(clientId);
+        return await _clientDataSource.GetClientAsync(clientId).ConfigureAwait(false);
     }
 
     public async Task<Client> GetClientAsync(ClientSecret clientSecret)
     {
-        return await _clientDataSource.GetClientAsync(clientSecret);
+        return await _clientDataSource.GetClientAsync(clientSecret).ConfigureAwait(false);
     }
 
     public async Task<TokenType> GetTokenType(Client client)
     {
-        TokenType? clientTokenType = await _tokenTypeDataSource.GetTokenTypeAsync(client);
+        TokenType? clientTokenType = await _tokenTypeDataSource.GetTokenTypeAsync(client).ConfigureAwait(false);
 
         if (clientTokenType is null && _options.Value.Tokens?.DefaultTokenType is not null)
         {
-            clientTokenType = await _tokenTypeDataSource.GetTokenTypeAsync(_options.Value.Tokens.DefaultTokenType);
+            clientTokenType = await _tokenTypeDataSource.GetTokenTypeAsync(_options.Value.Tokens.DefaultTokenType).ConfigureAwait(false);
 
             if (clientTokenType is null) throw new ServerConfigurationErrorException(
                 $"The token type which Identifier [{_options.Value.Tokens.DefaultTokenType}] " +
@@ -76,7 +76,9 @@ public class DefaultClientService : IClientService
             throw GetConfiguredRedirectUriException(new Abstractions.Errors.Exceptions.Common.InvalidRequestException("Missing request parameter: [redirect_uri]", state));
         }
 
-        IEnumerable<ClientRedirectionEndpoint>? clientRedirectionEndpoints = await _clientDataSource.GetClientRedirectionEndpointsAsync(client.ClientId);
+        IEnumerable<ClientRedirectionEndpoint>? clientRedirectionEndpoints = await _clientDataSource
+            .GetClientRedirectionEndpointsAsync(client.ClientId)
+            .ConfigureAwait(false);
         IEnumerable<string>? redirectionEndpoints = clientRedirectionEndpoints?.Select(x => x.Value);
 
         if (redirectionEndpoints?.Any() is not true)
@@ -88,7 +90,7 @@ public class DefaultClientService : IClientService
                     state));
             }
 
-            Flow? implicitFlow = await _flowService.GetFlowAsync(typeof(IImplicitFlow));
+            Flow? implicitFlow = await _flowService.GetFlowAsync(typeof(IImplicitFlow)).ConfigureAwait(false);
             if (implicitFlow is null)
             {
                 throw GetConfiguredRedirectUriException(new ServerErrorException("Implicit flow isn't registered.", state));
@@ -176,7 +178,7 @@ public class DefaultClientService : IClientService
 
     public async Task<bool> IsFlowAvailableForClientAsync(Client client, Flow flow)
     {
-        var clientFlows = await _clientDataSource.GetClientFlowsAsync(client.ClientId);
+        var clientFlows = await _clientDataSource.GetClientFlowsAsync(client.ClientId).ConfigureAwait(false);
 
         bool flowAvailable = clientFlows.Any(x => x.Name == flow.Name);
 

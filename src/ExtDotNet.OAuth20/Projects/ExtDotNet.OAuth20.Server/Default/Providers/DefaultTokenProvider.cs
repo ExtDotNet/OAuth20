@@ -25,7 +25,7 @@ public class DefaultTokenProvider : ITokenProvider
 
     public async Task<TokenType> GetTokenTypeAsync(Client client)
     {
-        return await _clientService.GetTokenType(client);
+        return await _clientService.GetTokenType(client).ConfigureAwait(false);
     }
 
     public async Task<string> GetTokenValueAsync(TokenType tokenType, TokenContext tokenContext)
@@ -37,6 +37,6 @@ public class DefaultTokenProvider : ITokenProvider
                 $"[{tokenType.Name}] in this server instance.");
         }
 
-        return await tokenBuilder!.BuildTokenAsync(tokenContext);
+        return await tokenBuilder!.BuildTokenAsync(tokenContext).ConfigureAwait(false);
     }
 }

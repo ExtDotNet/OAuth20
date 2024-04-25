@@ -38,7 +38,7 @@ public class DefaultRequestBodyClientCredentialsClientSecretReader : IRequestBod
 
         if (values.TryGetValue("client_id", out string? requestedClientId))
         {
-            Client? client = await _clientService.GetClientAsync(requestedClientId);
+            Client? client = await _clientService.GetClientAsync(requestedClientId).ConfigureAwait(false);
 
             if (client is null)
             {
@@ -47,11 +47,15 @@ public class DefaultRequestBodyClientCredentialsClientSecretReader : IRequestBod
 
             if (values.TryGetValue("client_secret", out string? requestedClientSecret))
             {
-                clientSecret = await _clientSecretService.GetClientSecretAsync(DefaultClientSecretType.RequestBodyClientCredentials.GetFieldNameAttributeValue(), requestedClientSecret);
+                clientSecret = await _clientSecretService
+                    .GetClientSecretAsync(DefaultClientSecretType.RequestBodyClientCredentials.GetFieldNameAttributeValue(), requestedClientSecret)
+                    .ConfigureAwait(false);
             }
             else
             {
-                clientSecret = await _clientSecretService.GetEmptyClientSecretAsync(DefaultClientSecretType.RequestBodyClientCredentials.GetFieldNameAttributeValue(), client);
+                clientSecret = await _clientSecretService
+                    .GetEmptyClientSecretAsync(DefaultClientSecretType.RequestBodyClientCredentials.GetFieldNameAttributeValue(), client)
+                    .ConfigureAwait(false);
             }
         }
 

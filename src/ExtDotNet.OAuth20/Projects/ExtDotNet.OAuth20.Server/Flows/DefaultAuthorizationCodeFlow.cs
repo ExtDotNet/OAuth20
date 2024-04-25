@@ -2,6 +2,7 @@
 // ExtDotNet licenses this file to you under the MIT license.
 
 using ExtDotNet.OAuth20.Server.Abstractions.Errors;
+using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models;
@@ -61,28 +62,30 @@ public class DefaultAuthorizationCodeFlow : IAuthorizationCodeFlow
                 "Missing request parameter: [state]");
         }
 
-        IResult result = await AuthorizeAsync(authArgs, endUser, client, scopeResult);
+        IResult result = await AuthorizeAsync(authArgs, endUser, client, scopeResult).ConfigureAwait(false);
 
         return result;
     }
 
     public async Task<IResult> AuthorizeAsync(AuthorizeArguments args, EndUser endUser, Client client, ScopeResult scopeResult)
     {
-        var flow = await _flowService.GetFlowAsync<IAuthorizationCodeFlow>();
+        var flow = await _flowService.GetFlowAsync<IAuthorizationCodeFlow>().ConfigureAwait(false);
         if (flow is null)
         {
             return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.ServerError, args.State, "Cannot determine the flow.");
         }
 
-        bool flowAvailable = await _clientService.IsFlowAvailableForClientAsync(client, flow);
+        bool flowAvailable = await _clientService.IsFlowAvailableForClientAsync(client, flow).ConfigureAwait(false);
         if (!flowAvailable)
         {
             return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.InvalidRequest, args.State, $"The selected flow is not available to the Client with [client_id] = [{args.ClientId}].");
         }
 
-        string redirectUri = await _clientService.GetRedirectUriAsync(args.RedirectUri, flow, client, args.State);
+        string redirectUri = await _clientService.GetRedirectUriAsync(args.RedirectUri, flow, client, args.State).ConfigureAwait(false);
 
-        string code = await _authorizationCodeService.GetAuthorizationCodeAsync(args, endUser, client, redirectUri, scopeResult.IssuedScope, scopeResult.IssuedScopeDifferent);
+        string code = await _authorizationCodeService
+            .GetAuthorizationCodeAsync(args, endUser, client, redirectUri, scopeResult.IssuedScope, scopeResult.IssuedScopeDifferent)
+            .ConfigureAwait(false);
         if (code is null)
         {
             return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.ServerError, args.State, "Cannot issue a code.");
@@ -97,21 +100,21 @@ public class DefaultAuthorizationCodeFlow : IAuthorizationCodeFlow
     {
         var tokenArgs = TokenArguments.Create(args);
 
-        IResult result = await GetTokenAsync(tokenArgs, client);
+        IResult result = await GetTokenAsync(tokenArgs, client).ConfigureAwait(false);
 
         return result;
     }
 
     public async Task<IResult> GetTokenAsync(TokenArguments args, Client client)
     {
-        var flow = await _flowService.GetFlowAsync<IAuthorizationCodeFlow>();
+        var flow = await _flowService.GetFlowAsync<IAuthorizationCodeFlow>().ConfigureAwait(false);
         if (flow is null)
         {
             return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.ServerError, "Cannot determine the flow.");
         }
 
-        AccessTokenResult accessToken = await _authorizationCodeService.ExchangeAuthorizationCodeAsync(args.Code, client, args.RedirectUri);
-        RefreshTokenResult refreshToken = await _refreshTokenService.GetRefreshTokenAsync(accessToken);
+        AccessTokenResult accessToken = await _authorizationCodeService.ExchangeAuthorizationCodeAsync(args.Code, client, args.RedirectUri).ConfigureAwait(false);
+        RefreshTokenResult refreshToken = await _refreshTokenService.GetRefreshTokenAsync(accessToken).ConfigureAwait(false);
 
         TokenResult result = TokenResult.Create(
             accessToken: accessToken.Value,

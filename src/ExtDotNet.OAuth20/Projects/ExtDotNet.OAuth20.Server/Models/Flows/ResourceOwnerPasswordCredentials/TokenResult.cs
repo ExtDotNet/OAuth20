@@ -101,6 +101,6 @@ public class TokenResult : TokenResultBase
 #if DEBUG
         Debug.WriteLine(responseBody);
 #endif
-        await httpContext.Response.WriteAsync(responseBody);
+        await httpContext.Response.WriteAsync(responseBody).ConfigureAwait(false);
     }
 }

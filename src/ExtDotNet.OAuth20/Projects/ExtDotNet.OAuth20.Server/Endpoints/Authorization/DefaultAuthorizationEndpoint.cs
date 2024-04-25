@@ -56,7 +56,7 @@ public class DefaultAuthorizationEndpoint : IAuthorizationEndpoint
 
     public async Task<IResult> InvokeAsync(HttpContext httpContext)
     {
-        FlowArguments flowArgs = await _flowArgsBuilder.BuildArgumentsAsync(httpContext);
+        FlowArguments flowArgs = await _flowArgsBuilder.BuildArgumentsAsync(httpContext).ConfigureAwait(false);
         var validationResult = _requestValidator.TryValidate(httpContext);
 
         if (!flowArgs.Values.TryGetValue("state", out string? state) && _options.Value.AuthorizationRequestStateRequired)
@@ -82,7 +82,7 @@ public class DefaultAuthorizationEndpoint : IAuthorizationEndpoint
             return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.InvalidRequest, state, null);
         }
 
-        Client? client = await _clientService.GetClientAsync(clientId);
+        Client? client = await _clientService.GetClientAsync(clientId).ConfigureAwait(false);
         if (client is null)
         {
             return _errorResultProvider.GetAuthorizeErrorResult(
@@ -91,12 +91,11 @@ public class DefaultAuthorizationEndpoint : IAuthorizationEndpoint
                 $"Client with [client_id] = [{clientId}] doesn't exist in the system.");
         }
 
-        if (!_endUserService.IsAuthenticated())
-        {
-            return await _loginService.RedirectToLoginAsync(flowArgs);
-        }
+        bool authenticated = await _endUserService.IsAuthenticatedAsync().ConfigureAwait(false);
 
-        var endUser = await _endUserService.GetCurrentEndUserAsync();
+        if (!authenticated) return await _loginService.RedirectToLoginAsync(flowArgs).ConfigureAwait(false);
+
+        var endUser = await _endUserService.GetCurrentEndUserAsync().ConfigureAwait(false);
         if (endUser is null)
         {
             return _errorResultProvider.GetAuthorizeErrorResult(
@@ -107,24 +106,24 @@ public class DefaultAuthorizationEndpoint : IAuthorizationEndpoint
 
         flowArgs.Values.TryGetValue("scope", out string? clientRequestedScope);
 
-        bool redirectToPermissionsRequired = await _permissionsService.RedirectToPermissionsRequiredAsync(endUser, client);
+        bool redirectToPermissionsRequired = await _permissionsService.RedirectToPermissionsRequiredAsync(endUser, client).ConfigureAwait(false);
         if (redirectToPermissionsRequired)
         {
-            ScopeResult serverAllowedScopeResult = await _scopeService.GetServerAllowedScopeAsync(clientRequestedScope, client, state);
-            await _permissionsService.AddPermissionsRequestAsync(serverAllowedScopeResult, endUser, client);
+            ScopeResult serverAllowedScopeResult = await _scopeService.GetServerAllowedScopeAsync(clientRequestedScope, client, state).ConfigureAwait(false);
+            await _permissionsService.AddPermissionsRequestAsync(serverAllowedScopeResult, endUser, client).ConfigureAwait(false);
 
-            return await _permissionsService.RedirectToPermissionsAsync(flowArgs, client, state);
+            return await _permissionsService.RedirectToPermissionsAsync(flowArgs, client, state).ConfigureAwait(false);
         }
 
         ScopeResult scopeResult;
-        bool endUserPermissionsReuired = await _permissionsService.EndUserPermissionsRequiredAsync(client);
-        if (endUserPermissionsReuired)
+        bool endUserPermissionsRequired = await _permissionsService.EndUserPermissionsRequiredAsync(client).ConfigureAwait(false);
+        if (endUserPermissionsRequired)
         {
-            scopeResult = await _scopeService.GetEndUserClientScopeAsync(clientRequestedScope, endUser, client, state);
+            scopeResult = await _scopeService.GetEndUserClientScopeAsync(clientRequestedScope, endUser, client, state).ConfigureAwait(false);
         }
         else
         {
-            scopeResult = await _scopeService.GetServerAllowedScopeAsync(clientRequestedScope, client, state);
+            scopeResult = await _scopeService.GetServerAllowedScopeAsync(clientRequestedScope, client, state).ConfigureAwait(false);
         }
 
         if (_flowRouter.TryGetAuthorizeFlow(responseType, out IAuthorizeFlow? flow))
@@ -134,7 +133,7 @@ public class DefaultAuthorizationEndpoint : IAuthorizationEndpoint
                 return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.ServerError, state, "Cannot determine the flow.");
             }
 
-            return await flow.AuthorizeAsync(flowArgs, client, endUser, scopeResult);
+            return await flow.AuthorizeAsync(flowArgs, client, endUser, scopeResult).ConfigureAwait(false);
         }
         else
         {

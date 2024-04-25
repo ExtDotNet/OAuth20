@@ -2,6 +2,7 @@
 // ExtDotNet licenses this file to you under the MIT license.
 
 using ExtDotNet.OAuth20.Server.Abstractions.Errors;
+using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models;
@@ -47,35 +48,37 @@ public class DefaultClientCredentialsFlow : IClientCredentialsFlow
     {
         var tokenArgs = TokenArguments.Create(args);
 
-        var result = await GetTokenAsync(tokenArgs, client);
+        var result = await GetTokenAsync(tokenArgs, client).ConfigureAwait(false);
 
         return result;
     }
 
     public async Task<IResult> GetTokenAsync(TokenArguments args, Client client)
     {
-        var flow = await _flowService.GetFlowAsync<IClientCredentialsFlow>();
+        var flow = await _flowService.GetFlowAsync<IClientCredentialsFlow>().ConfigureAwait(false);
         if (flow is null)
         {
             // TODO: token server error or something
             return _errorResultProvider.GetTokenErrorResult(DefaultTokenErrorType.Undefined, null, "Cannot determine the flow.");
         }
 
-        bool flowAvailable = await _clientService.IsFlowAvailableForClientAsync(client, flow);
+        bool flowAvailable = await _clientService.IsFlowAvailableForClientAsync(client, flow).ConfigureAwait(false);
         if (!flowAvailable)
         {
             return _errorResultProvider.GetTokenErrorResult(DefaultTokenErrorType.InvalidRequest, null, $"The selected flow is not available to the Client with [client_id] = [{client.ClientId}].");
         }
 
-        ScopeResult scopeResult = await _scopeService.GetServerAllowedScopeAsync(args.Scope, client);
+        ScopeResult scopeResult = await _scopeService.GetServerAllowedScopeAsync(args.Scope, client).ConfigureAwait(false);
 
-        AccessTokenResult accessToken = await _accessTokenService.GetAccessTokenAsync(
-            scopeResult.IssuedScope,
-            scopeResult.IssuedScopeDifferent,
-            client,
-            redirectUri: null!);
+        AccessTokenResult accessToken = await _accessTokenService
+            .GetAccessTokenAsync(
+                scopeResult.IssuedScope,
+                scopeResult.IssuedScopeDifferent,
+                client,
+                redirectUri: null!)
+            .ConfigureAwait(false);
 
-        RefreshTokenResult refreshToken = await _refreshTokenService.GetRefreshTokenAsync(accessToken);
+        RefreshTokenResult refreshToken = await _refreshTokenService.GetRefreshTokenAsync(accessToken).ConfigureAwait(false);
 
         TokenResult result = TokenResult.Create(
             accessToken: accessToken.Value,

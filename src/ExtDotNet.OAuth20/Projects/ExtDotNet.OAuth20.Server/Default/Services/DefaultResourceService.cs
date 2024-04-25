@@ -18,7 +18,7 @@ public class DefaultResourceService : IResourceService
 
     public async Task<Resource> GetResourceByScopeAsync(Scope scope)
     {
-        return await _resourceDataSource.GetResourceByScopeAsync(scope);
+        return await _resourceDataSource.GetResourceByScopeAsync(scope).ConfigureAwait(false);
     }
 
     public async Task<IEnumerable<Resource>> GetResourcesByScopesAsync(IEnumerable<Scope> scopes)
@@ -29,7 +29,7 @@ public class DefaultResourceService : IResourceService
         {
             if (!resources.TryGetValue(scope.ResourceId, out var _))
             {
-                resources[scope.ResourceId] = await _resourceDataSource.GetResourceByScopeAsync(scope);
+                resources[scope.ResourceId] = await _resourceDataSource.GetResourceByScopeAsync(scope).ConfigureAwait(false);
             }
         }
 
@@ -38,6 +38,6 @@ public class DefaultResourceService : IResourceService
 
     public async Task<IEnumerable<SigningCredentialsAlgorithm>> GetResourceSigningCredentialsAlgorithmsAsync(Resource resource)
     {
-        return await _resourceDataSource.GetResourceSigningCredentialsAlgorithmsAsync(resource);
+        return await _resourceDataSource.GetResourceSigningCredentialsAlgorithmsAsync(resource).ConfigureAwait(false);
     }
 }

@@ -5,7 +5,6 @@ using ExtDotNet.OAuth20.Server.Abstractions.DataSources;
 using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Domain;
-using ExtDotNet.OAuth20.Server.Flows;
 using ExtDotNet.OAuth20.Server.Options;
 using Microsoft.Extensions.Options;
 
@@ -25,12 +24,12 @@ public class DefaultFlowService : IFlowService
 
     public async Task<Flow?> GetFlowAsync(string name)
     {
-        return await FlowDataSource.GetFlowAsync(name);
+        return await FlowDataSource.GetFlowAsync(name).ConfigureAwait(false);
     }
 
     public virtual async Task<Flow?> GetFlowAsync<T>()
         where T : IFlow
-        => await GetFlowAsync(typeof(T));
+        => await GetFlowAsync(typeof(T)).ConfigureAwait(false);
 
     public virtual async Task<Flow?> GetFlowAsync<T>(T implementation)
         where T : IFlow
@@ -47,7 +46,7 @@ public class DefaultFlowService : IFlowService
 
         if (flowName is not null)
         {
-            return await FlowDataSource.GetFlowAsync(flowName);
+            return await FlowDataSource.GetFlowAsync(flowName).ConfigureAwait(false);
         }
         else
         {
@@ -68,7 +67,7 @@ public class DefaultFlowService : IFlowService
 
         if (flowName is not null)
         {
-            return await FlowDataSource.GetFlowAsync(flowName);
+            return await FlowDataSource.GetFlowAsync(flowName).ConfigureAwait(false);
         }
         else
         {

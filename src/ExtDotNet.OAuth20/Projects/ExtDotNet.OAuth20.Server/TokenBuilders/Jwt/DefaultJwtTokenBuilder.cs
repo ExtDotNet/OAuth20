@@ -39,11 +39,11 @@ public class DefaultJwtTokenBuilder : IJwtTokenBuilder
 
     public async Task<string> BuildTokenAsync(Models.TokenContext tokenBuilderContext)
     {
-        var jwtHeader = await BuildJwtTokenHeaderAsync(tokenBuilderContext.Scopes);
-        var jwtPayload = await BuildJwtTokenPayloadAsync(tokenBuilderContext);
+        var jwtHeader = await BuildJwtTokenHeaderAsync(tokenBuilderContext.Scopes).ConfigureAwait(false);
+        var jwtPayload = await BuildJwtTokenPayloadAsync(tokenBuilderContext).ConfigureAwait(false);
 
-        var jwtSecurityToken = await BuildJwtSecurityTokenAsync(jwtHeader, jwtPayload);
-        var jwtSecurityTokenString = await BuildJwtSecurityTokenStringAsync(jwtSecurityToken);
+        var jwtSecurityToken = await BuildJwtSecurityTokenAsync(jwtHeader, jwtPayload).ConfigureAwait(false);
+        var jwtSecurityTokenString = await BuildJwtSecurityTokenStringAsync(jwtSecurityToken).ConfigureAwait(false);
 
         return jwtSecurityTokenString;
     }
@@ -114,8 +114,12 @@ public class DefaultJwtTokenBuilder : IJwtTokenBuilder
 
     private async Task<JwtHeader> BuildJwtTokenHeaderAsync(IEnumerable<Scope> scopes)
     {
-        var signingCredentialsAlgorithms = await _signingCredentialsAlgorithmsService.GetSigningCredentialsAlgorithmsForScopesAsync(scopes);
-        var signingCredentialsList = await _serverSigningCredentialsProvider.GetSigningCredentialsAsync(signingCredentialsAlgorithms);
+        var signingCredentialsAlgorithms = await _signingCredentialsAlgorithmsService
+            .GetSigningCredentialsAlgorithmsForScopesAsync(scopes)
+            .ConfigureAwait(false);
+        var signingCredentialsList = await _serverSigningCredentialsProvider
+            .GetSigningCredentialsAsync(signingCredentialsAlgorithms)
+            .ConfigureAwait(false);
 
         SigningCredentials signingCredentials;
 
@@ -125,7 +129,7 @@ public class DefaultJwtTokenBuilder : IJwtTokenBuilder
         }
         else
         {
-            signingCredentials = await _serverSigningCredentialsProvider.GetDefaultSigningCredentialsAsync();
+            signingCredentials = await _serverSigningCredentialsProvider.GetDefaultSigningCredentialsAsync().ConfigureAwait(false);
         }
 
         JwtHeader jwtHeader = new(signingCredentials);

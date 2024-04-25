@@ -3,7 +3,7 @@
 
 using ExtDotNet.OAuth20.Server.Abstractions.ClientSecretReaders;
 
-namespace ExtDotNet.OAuth20.Server.Default.ClientSecrets;
+namespace ExtDotNet.OAuth20.Server.Default.ClientSecretReaders;
 
 public class DefaultClientSecretReaderSelector : IClientSecretReaderSelector
 {

@@ -18,11 +18,11 @@ public class DefaultClientSecretService : IClientSecretService
 
     public async Task<ClientSecret?> GetClientSecretAsync(string type, string clientSecretContent)
     {
-        return await _clientSecretDataSource.GetClientSecretAsync(type, clientSecretContent);
+        return await _clientSecretDataSource.GetClientSecretAsync(type, clientSecretContent).ConfigureAwait(false);
     }
 
     public async Task<ClientSecret?> GetEmptyClientSecretAsync(string type, Client client)
     {
-        return await _clientSecretDataSource.GetEmptyClientSecretAsync(type, client);
+        return await _clientSecretDataSource.GetEmptyClientSecretAsync(type, client).ConfigureAwait(false);
     }
 }

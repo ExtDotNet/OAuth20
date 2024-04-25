@@ -5,7 +5,7 @@ using ExtDotNet.OAuth20.Server.Abstractions.ClientSecretReaders;
 using ExtDotNet.OAuth20.Server.ClientSecretReaders.AuthorizationHeaderBasic;
 using ExtDotNet.OAuth20.Server.ClientSecretReaders.RequestBodyClientCredentials;
 using ExtDotNet.OAuth20.Server.ClientSecretReaders.TlsCertificate;
-using ExtDotNet.OAuth20.Server.Default.ClientSecrets;
+using ExtDotNet.OAuth20.Server.Default.ClientSecretReaders;
 using ExtDotNet.OAuth20.Server.Options;
 using Microsoft.Extensions.Options;
 using System.Reflection;

@@ -32,7 +32,7 @@ public class OAuth20ServerEndpointsMiddleware
 
             try
             {
-                result = await endpoint!.InvokeAsync(httpContext);
+                result = await endpoint!.InvokeAsync(httpContext).ConfigureAwait(false);
             }
             catch (OAuth20Exception exception)
             {
@@ -43,7 +43,7 @@ public class OAuth20ServerEndpointsMiddleware
                 throw;
             }
 
-            await result.ExecuteAsync(httpContext);
+            await result.ExecuteAsync(httpContext).ConfigureAwait(false);
         }
         else
         {

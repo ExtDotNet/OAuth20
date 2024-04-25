@@ -5,7 +5,7 @@ namespace ExtDotNet.OAuth20.Server.Abstractions.Services;
 
 public interface IServerUriService
 {
-    public Task<string?> GetServerRelativeUriPrefix();
+    public Task<string?> GetServerRelativeUriPrefixAsync();
 
     public Task<Uri> GetServerAbsoluteUri(Uri relativeUri);
 

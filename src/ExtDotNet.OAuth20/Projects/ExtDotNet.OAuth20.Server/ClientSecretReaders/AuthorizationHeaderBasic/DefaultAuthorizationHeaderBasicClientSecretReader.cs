@@ -77,7 +77,7 @@ public class DefaultAuthorizationHeaderBasicClientSecretReader : IAuthorizationH
         string requestedClientId = clientCredentials[0];
         string? requestedClientSecret = clientCredentials.Length == 2 ? clientCredentials[1] : null;
 
-        Client? client = await _clientService.GetClientAsync(requestedClientId);
+        Client? client = await _clientService.GetClientAsync(requestedClientId).ConfigureAwait(false);
 
         if (client is null)
         {
@@ -86,11 +86,15 @@ public class DefaultAuthorizationHeaderBasicClientSecretReader : IAuthorizationH
 
         if (requestedClientSecret is not null)
         {
-            clientSecret = await _clientSecretService.GetClientSecretAsync(DefaultClientSecretType.AuthorizationHeaderBasic.GetFieldNameAttributeValue(), requestedClientSecret);
+            clientSecret = await _clientSecretService
+                .GetClientSecretAsync(DefaultClientSecretType.AuthorizationHeaderBasic.GetFieldNameAttributeValue(), requestedClientSecret)
+                .ConfigureAwait(false);
         }
         else
         {
-            clientSecret = await _clientSecretService.GetEmptyClientSecretAsync(DefaultClientSecretType.AuthorizationHeaderBasic.GetFieldNameAttributeValue(), client);
+            clientSecret = await _clientSecretService
+                .GetEmptyClientSecretAsync(DefaultClientSecretType.AuthorizationHeaderBasic.GetFieldNameAttributeValue(), client)
+                .ConfigureAwait(false);
         }
 
         return clientSecret;

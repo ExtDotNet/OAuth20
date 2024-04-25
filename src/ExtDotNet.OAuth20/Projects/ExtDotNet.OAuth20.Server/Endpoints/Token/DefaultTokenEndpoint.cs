@@ -40,7 +40,7 @@ public class DefaultTokenEndpoint : ITokenEndpoint
     {
         var validationResult = _requestValidator.TryValidate(httpContext);
 
-        FlowArguments flowArgs = await _flowArgsBuilder.BuildArgumentsAsync(httpContext);
+        FlowArguments flowArgs = await _flowArgsBuilder.BuildArgumentsAsync(httpContext).ConfigureAwait(false);
 
         if (!validationResult.Success)
         {
@@ -54,7 +54,7 @@ public class DefaultTokenEndpoint : ITokenEndpoint
             return _errorResultProvider.GetTokenErrorResult(DefaultTokenErrorType.InvalidRequest, state, null);
         }
 
-        Client? client = await _clientAuthenticationService.AuthenticateClientAsync(httpContext);
+        Client? client = await _clientAuthenticationService.AuthenticateClientAsync(httpContext).ConfigureAwait(false);
         if (client is null)
         {
             flowArgs.Values.TryGetValue("state", out string? state);
@@ -63,7 +63,7 @@ public class DefaultTokenEndpoint : ITokenEndpoint
 
         if (_flowRouter.TryGetTokenFlow(responseType, out ITokenFlow? flow))
         {
-            return await flow!.GetTokenAsync(flowArgs, client);
+            return await flow!.GetTokenAsync(flowArgs, client).ConfigureAwait(false);
         }
         else
         {

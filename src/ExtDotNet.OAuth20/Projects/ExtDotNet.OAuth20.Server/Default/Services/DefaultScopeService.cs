@@ -50,7 +50,7 @@ public class DefaultScopeService : IScopeService
         // Here is the possibility of executing an user-defined interception of the requested scope.
         if (_scopeInterceptor is not null)
         {
-            clientRequestedScope = await _scopeInterceptor.OnExecutingAsync(clientRequestedScope, client, state);
+            clientRequestedScope = await _scopeInterceptor.OnExecutingAsync(clientRequestedScope, client, state).ConfigureAwait(false);
         }
 
         if (clientRequestedScope is null && _options.Value.AuthorizationRequestScopeRequired)
@@ -58,7 +58,7 @@ public class DefaultScopeService : IScopeService
             throw new InvalidScopeException("Missing request parameter: [scope]", state);
         }
 
-        IEnumerable<Scope> allowedScopes = await _scopeDataSource.GetScopesAsync(client);
+        IEnumerable<Scope> allowedScopes = await _scopeDataSource.GetScopesAsync(client).ConfigureAwait(false);
 
         if (_options.Value.UserScopeAllowanceRequired && !allowedScopes.Any())
         {
@@ -89,7 +89,7 @@ public class DefaultScopeService : IScopeService
 
             foreach (string preDefinedScopeName in _options.Value.ScopePreDefinedDefaultValue)
             {
-                Scope? preDefinedScopeModel = await _scopeDataSource.GetScopeAsync(preDefinedScopeName);
+                Scope? preDefinedScopeModel = await _scopeDataSource.GetScopeAsync(preDefinedScopeName).ConfigureAwait(false);
 
                 if (preDefinedScopeModel is null)
                 {
@@ -107,7 +107,7 @@ public class DefaultScopeService : IScopeService
             // Here is the possibility of executing an user-defined interception of the issued scope models.
             if (_scopeInterceptor is not null)
             {
-                issuedScopeModels = await _scopeInterceptor.OnExecutedAsync(issuedScopeModels, client, state);
+                issuedScopeModels = await _scopeInterceptor.OnExecutedAsync(issuedScopeModels, client, state).ConfigureAwait(false);
             }
 
             string issuedScopeValue = issuedScopeModels.Select(x => x.Name).Aggregate((first, second) => $"{first} {second}");
@@ -115,7 +115,7 @@ public class DefaultScopeService : IScopeService
             // Here is the possibility of executing an user-defined interception of the issued scope string.
             if (_scopeInterceptor is not null)
             {
-                issuedScopeValue = await _scopeInterceptor.OnExecutedAsync(issuedScopeValue, client, state);
+                issuedScopeValue = await _scopeInterceptor.OnExecutedAsync(issuedScopeValue, client, state).ConfigureAwait(false);
             }
 
             ScopeResult issuedScope = new()
@@ -135,7 +135,7 @@ public class DefaultScopeService : IScopeService
 
             foreach (string requestedScopeName in requestedScopeNames)
             {
-                Scope? requestedScopeModel = await _scopeDataSource.GetScopeAsync(requestedScopeName);
+                Scope? requestedScopeModel = await _scopeDataSource.GetScopeAsync(requestedScopeName).ConfigureAwait(false);
 
                 if (requestedScopeModel is null)
                 {
@@ -153,7 +153,7 @@ public class DefaultScopeService : IScopeService
             // Here is the possibility of executing an user-defined interception of the requested scope.
             if (_scopeInterceptor is not null)
             {
-                requestedScopeModels = await _scopeInterceptor.OnExecutingAsync(requestedScopeModels, client, state);
+                requestedScopeModels = await _scopeInterceptor.OnExecutingAsync(requestedScopeModels, client, state).ConfigureAwait(false);
             }
 
             IEnumerable<Scope> issuedScopeModels = requestedScopeModels.IntersectBy(allowedScopes.Select(x => x.Name), x => x.Name).ToList();
@@ -161,7 +161,7 @@ public class DefaultScopeService : IScopeService
             // Here is the possibility of executing an user-defined interception of the issued scope models.
             if (_scopeInterceptor is not null)
             {
-                issuedScopeModels = await _scopeInterceptor.OnExecutedAsync(issuedScopeModels, client, state);
+                issuedScopeModels = await _scopeInterceptor.OnExecutedAsync(issuedScopeModels, client, state).ConfigureAwait(false);
             }
 
             string issuedScopeValue = issuedScopeModels.Select(x => x.Name).Aggregate((first, second) => $"{first} {second}");
@@ -169,7 +169,7 @@ public class DefaultScopeService : IScopeService
             // Here is the possibility of executing an user-defined interception of the issued scope string.
             if (_scopeInterceptor is not null)
             {
-                issuedScopeValue = await _scopeInterceptor.OnExecutedAsync(issuedScopeValue, client, state);
+                issuedScopeValue = await _scopeInterceptor.OnExecutedAsync(issuedScopeValue, client, state).ConfigureAwait(false);
             }
 
             // Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-3.3"/>
@@ -194,12 +194,12 @@ public class DefaultScopeService : IScopeService
     {
         string[] names = scope.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-        return await _scopeDataSource.GetScopesAsync(names);
+        return await _scopeDataSource.GetScopesAsync(names).ConfigureAwait(false);
     }
 
     public async Task<bool> HasEndUserClientScopeGrantedAsync(EndUser endUser, Client client)
     {
-        var endUserClientScopeResult = await _endUserClientScopeStorage.GetEndUserClientScopeResultAsync(endUser.Username, client.ClientId);
+        var endUserClientScopeResult = await _endUserClientScopeStorage.GetEndUserClientScopeResultAsync(endUser.Username, client.ClientId).ConfigureAwait(false);
 
         bool hasGranted = endUserClientScopeResult is not null;
 
@@ -208,14 +208,14 @@ public class DefaultScopeService : IScopeService
 
     public async Task<ScopeResult> GetEndUserClientScopeAsync(string? requestedScope, EndUser endUser, Client client, string? state = null)
     {
-        var endUserClientScopeResult = await _endUserClientScopeStorage.GetEndUserClientScopeResultAsync(endUser.Username, client.ClientId);
+        var endUserClientScopeResult = await _endUserClientScopeStorage.GetEndUserClientScopeResultAsync(endUser.Username, client.ClientId).ConfigureAwait(false);
         // TODO: detail the error message
         if (endUserClientScopeResult is null) throw new Exception();
 
         string issuedScope = endUserClientScopeResult.EndUserIssuedScope;
 
         string[] scopes = issuedScope.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        bool allScopesValid = await _scopeDataSource.AllScopesValidAsync(scopes);
+        bool allScopesValid = await _scopeDataSource.AllScopesValidAsync(scopes).ConfigureAwait(false);
         // TODO: detail the error message
         if (!allScopesValid) throw new Exception();
 

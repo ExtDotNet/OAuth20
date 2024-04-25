@@ -19,13 +19,15 @@ public class DefaultSigningCredentialsAlgorithmsService : ISigningCredentialsAlg
     public async Task<IEnumerable<SigningCredentialsAlgorithm>> GetSigningCredentialsAlgorithmsForScopesAsync(IEnumerable<Scope> scopes)
     {
         // TODO: Can be refactored
-        IEnumerable<Resource> resources = await _resourceService.GetResourcesByScopesAsync(scopes);
+        IEnumerable<Resource> resources = await _resourceService.GetResourcesByScopesAsync(scopes).ConfigureAwait(false);
 
-        IEnumerable<SigningCredentialsAlgorithm> signingCredentialsAlgorithms = Enumerable.Empty<SigningCredentialsAlgorithm>();
+        IEnumerable<SigningCredentialsAlgorithm> signingCredentialsAlgorithms = [];
 
         foreach (var resource in resources)
         {
-            IEnumerable<SigningCredentialsAlgorithm> resourceSigningCredentialsAlgorithms = await _resourceService.GetResourceSigningCredentialsAlgorithmsAsync(resource);
+            IEnumerable<SigningCredentialsAlgorithm> resourceSigningCredentialsAlgorithms = await _resourceService
+                .GetResourceSigningCredentialsAlgorithmsAsync(resource)
+                .ConfigureAwait(false);
 
             if (!resourceSigningCredentialsAlgorithms.Any())
             {

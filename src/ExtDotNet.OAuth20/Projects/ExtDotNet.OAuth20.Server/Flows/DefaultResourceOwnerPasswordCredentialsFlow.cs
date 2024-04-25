@@ -2,6 +2,7 @@
 // ExtDotNet licenses this file to you under the MIT license.
 
 using ExtDotNet.OAuth20.Server.Abstractions.Errors;
+using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models;
@@ -50,42 +51,44 @@ public class DefaultResourceOwnerPasswordCredentialsFlow : IResourceOwnerPasswor
     {
         var tokenArgs = TokenArguments.Create(args);
 
-        var result = await GetTokenAsync(tokenArgs, client);
+        var result = await GetTokenAsync(tokenArgs, client).ConfigureAwait(false);
         return result;
     }
 
     public async Task<IResult> GetTokenAsync(TokenArguments args, Client client)
     {
-        var endUser = await _endUserService.GetEndUserAsync(args.Username, args.Password);
+        var endUser = await _endUserService.GetEndUserAsync(args.Username, args.Password).ConfigureAwait(false);
         if (endUser is null)
         {
             // TODO: token server error or something
             return _errorResultProvider.GetTokenErrorResult(DefaultTokenErrorType.UnsupportedGrantType, null, "EndUser's authentication failed. Incorrect username or password.");
         }
 
-        var flow = await _flowService.GetFlowAsync<IResourceOwnerPasswordCredentialsFlow>();
+        var flow = await _flowService.GetFlowAsync<IResourceOwnerPasswordCredentialsFlow>().ConfigureAwait(false);
         if (flow is null)
         {
             // TODO: token server error or something
             return _errorResultProvider.GetTokenErrorResult(DefaultTokenErrorType.Undefined, null, "Cannot determine the flow.");
         }
 
-        bool flowAvailable = await _clientService.IsFlowAvailableForClientAsync(client, flow);
+        bool flowAvailable = await _clientService.IsFlowAvailableForClientAsync(client, flow).ConfigureAwait(false);
         if (!flowAvailable)
         {
             return _errorResultProvider.GetTokenErrorResult(DefaultTokenErrorType.InvalidRequest, null, $"The selected flow is not available to the Client with [client_id] = [{client.ClientId}].");
         }
 
-        ScopeResult scopeResult = await _scopeService.GetServerAllowedScopeAsync(args.Scope, client);
+        ScopeResult scopeResult = await _scopeService.GetServerAllowedScopeAsync(args.Scope, client).ConfigureAwait(false);
 
-        AccessTokenResult accessToken = await _accessTokenService.GetAccessTokenAsync(
-           scopeResult.IssuedScope,
-           scopeResult.IssuedScopeDifferent,
-           client,
-           null,
-           endUser);
+        AccessTokenResult accessToken = await _accessTokenService
+            .GetAccessTokenAsync(
+                scopeResult.IssuedScope,
+                scopeResult.IssuedScopeDifferent,
+                client,
+                null,
+                endUser)
+            .ConfigureAwait(false);
 
-        RefreshTokenResult refreshToken = await _refreshTokenService.GetRefreshTokenAsync(accessToken);
+        RefreshTokenResult refreshToken = await _refreshTokenService.GetRefreshTokenAsync(accessToken).ConfigureAwait(false);
 
         TokenResult result = TokenResult.Create(
             accessToken: accessToken.Value,

@@ -36,11 +36,11 @@ public class DefaultPermissionsService : IPermissionsService
 
     public async Task<bool> RedirectToPermissionsRequiredAsync(EndUser endUser, Client client)
     {
-        bool endUserPermissionsRequired = await EndUserPermissionsRequiredAsync(client);
+        bool endUserPermissionsRequired = await EndUserPermissionsRequiredAsync(client).ConfigureAwait(false);
 
         if (endUserPermissionsRequired)
         {
-            var hasEndUserClientScopeGranted = await _scopeService.HasEndUserClientScopeGrantedAsync(endUser, client);
+            var hasEndUserClientScopeGranted = await _scopeService.HasEndUserClientScopeGrantedAsync(endUser, client).ConfigureAwait(false);
 
             if (!hasEndUserClientScopeGranted) return true;
         }
@@ -66,12 +66,12 @@ public class DefaultPermissionsService : IPermissionsService
             ServerAllowedScope = scopeResult.IssuedScope,
         };
 
-        await _endUserClientScopeStorage.AddEndUserClientScopeRequestAsync(request);
+        await _endUserClientScopeStorage.AddEndUserClientScopeRequestAsync(request).ConfigureAwait(false);
     }
 
     public async Task<ScopeResult?> GetPermissionsRequestAsync(EndUser endUser, Client client)
     {
-        var request = await _endUserClientScopeStorage.GetEndUserClientScopeRequestAsync(endUser.Username, client.ClientId);
+        var request = await _endUserClientScopeStorage.GetEndUserClientScopeRequestAsync(endUser.Username, client.ClientId).ConfigureAwait(false);
 
         if (request == null) return null;
 
@@ -96,12 +96,12 @@ public class DefaultPermissionsService : IPermissionsService
             EndUserIssuedScope = scopeResult.IssuedScope,
         };
 
-        await _endUserClientScopeStorage.AddEndUserClientScopeResultAsync(request);
+        await _endUserClientScopeStorage.AddEndUserClientScopeResultAsync(request).ConfigureAwait(false);
     }
 
     public async Task<ScopeResult?> GetPermissionsResultAsync(EndUser endUser, Client client)
     {
-        var result = await _endUserClientScopeStorage.GetEndUserClientScopeResultAsync(endUser.Username, client.ClientId);
+        var result = await _endUserClientScopeStorage.GetEndUserClientScopeResultAsync(endUser.Username, client.ClientId).ConfigureAwait(false);
 
         if (result == null) return null;
 
@@ -126,7 +126,7 @@ public class DefaultPermissionsService : IPermissionsService
         Uri permissionsEndpointUri = new(permissionsEndpoint, UriKind.RelativeOrAbsolute);
         if (!permissionsEndpointUri.IsAbsoluteUri)
         {
-            Uri instanceUri = await _serverMetadataService.GetCurrentInstanceUriAsync();
+            Uri instanceUri = await _serverMetadataService.GetCurrentInstanceUriAsync().ConfigureAwait(false);
             permissionsEndpointUri = new Uri(instanceUri, permissionsEndpointUri);
         }
 

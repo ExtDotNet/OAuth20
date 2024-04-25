@@ -24,13 +24,13 @@ public class DefaultServerUriService : IServerUriService
     {
         string path = relativeUri.LocalPath;
 
-        return await GetServerAbsoluteUri(path);
+        return await GetServerAbsoluteUri(path).ConfigureAwait(false);
     }
 
     public async Task<Uri> GetServerAbsoluteUri(string relativeUri)
     {
-        Uri uri = await _serverMetadataService.GetCurrentInstanceUriAsync();
-        Uri completeRelativeUri = await GetServerRelativeUri(relativeUri);
+        Uri uri = await _serverMetadataService.GetCurrentInstanceUriAsync().ConfigureAwait(false);
+        Uri completeRelativeUri = await GetServerRelativeUri(relativeUri).ConfigureAwait(false);
 
         UriBuilder builder = new()
         {
@@ -43,14 +43,14 @@ public class DefaultServerUriService : IServerUriService
         return builder.Uri;
     }
 
-    public Task<string?> GetServerRelativeUriPrefix()
+    public Task<string?> GetServerRelativeUriPrefixAsync()
     {
         return Task.FromResult(_options.Value.AuthorizationServerRelativeUriPrefix);
     }
 
     public async Task<Uri> GetServerRelativeUri(Uri relativeUri)
     {
-        string? prefix = await GetServerRelativeUriPrefix();
+        string? prefix = await GetServerRelativeUriPrefixAsync().ConfigureAwait(false);
 
         string path;
 

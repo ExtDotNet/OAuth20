@@ -2,9 +2,8 @@
 // ExtDotNet licenses this file to you under the MIT license.
 
 using ExtDotNet.OAuth20.Server.Abstractions.ClientSecretReaders;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace ExtDotNet.OAuth20.Server.Default.ClientSecrets;
+namespace ExtDotNet.OAuth20.Server.Default.ClientSecretReaders;
 
 public class DefaultClientSecretReaderProvider : IClientSecretReaderProvider
 {

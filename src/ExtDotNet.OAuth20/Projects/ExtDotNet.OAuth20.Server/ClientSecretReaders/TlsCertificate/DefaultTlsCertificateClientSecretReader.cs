@@ -20,7 +20,9 @@ public class DefaultTlsCertificateClientSecretReader : ITlsCertificateClientSecr
     {
         ClientSecret? clientSecret = null;
 
-        var clientCertificate = await httpContext.Connection.GetClientCertificateAsync();
+        var clientCertificate = await httpContext.Connection
+            .GetClientCertificateAsync()
+            .ConfigureAwait(false);
 
         if (clientCertificate is null)
         {
@@ -29,7 +31,9 @@ public class DefaultTlsCertificateClientSecretReader : ITlsCertificateClientSecr
 
         string clientSecretContent = clientCertificate.GetRawCertDataString();
 
-        await _clientSecretService.GetClientSecretAsync(DefaultClientSecretType.TlsCertificate.GetFieldNameAttributeValue(), clientSecretContent);
+        await _clientSecretService
+            .GetClientSecretAsync(DefaultClientSecretType.TlsCertificate.GetFieldNameAttributeValue(), clientSecretContent)
+            .ConfigureAwait(false);
 
         return clientSecret;
     }

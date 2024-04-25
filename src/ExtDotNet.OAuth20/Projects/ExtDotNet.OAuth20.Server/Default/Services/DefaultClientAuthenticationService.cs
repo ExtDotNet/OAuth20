@@ -21,7 +21,7 @@ public class DefaultClientAuthenticationService : IClientAuthenticationService
 
     public async Task<Client?> AuthenticateClientAsync(HttpContext httpContext)
     {
-        var clientSecretReaders = await _clientSecretReaderSelector.GetClientSecretReadersAsync();
+        var clientSecretReaders = await _clientSecretReaderSelector.GetClientSecretReadersAsync().ConfigureAwait(false);
 
         if (!clientSecretReaders.Any())
         {
@@ -40,11 +40,11 @@ public class DefaultClientAuthenticationService : IClientAuthenticationService
             {
                 IClientSecretReader clientSecretReader = clientSecretReadersEnumerator.Current;
 
-                ClientSecret? clientSecret = await clientSecretReader.GetClientSecretAsync(httpContext);
+                ClientSecret? clientSecret = await clientSecretReader.GetClientSecretAsync(httpContext).ConfigureAwait(false);
 
                 if (clientSecret is not null)
                 {
-                    client = await _clientService.GetClientAsync(clientSecret);
+                    client = await _clientService.GetClientAsync(clientSecret).ConfigureAwait(false);
                 }
             }
         }

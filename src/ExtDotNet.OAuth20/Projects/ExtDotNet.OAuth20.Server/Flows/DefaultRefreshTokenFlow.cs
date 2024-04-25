@@ -2,6 +2,7 @@
 // ExtDotNet licenses this file to you under the MIT license.
 
 using ExtDotNet.OAuth20.Server.Abstractions.Errors;
+using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models.Flows;
 using ExtDotNet.OAuth20.Server.Models.Flows.RefreshToken;
@@ -28,7 +29,7 @@ public class DefaultRefreshTokenFlow : IRefreshTokenFlow
     {
         TokenArguments tokenArgs = TokenArguments.Create(args);
 
-        var result = await GetTokenAsync(tokenArgs, client);
+        var result = await GetTokenAsync(tokenArgs, client).ConfigureAwait(false);
 
         return result;
     }

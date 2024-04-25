@@ -41,7 +41,7 @@ public class DefaultLoginService : ILoginService
             return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.InvalidRequest, state: state, "Missing request parameter: [client_id]");
         }
 
-        var client = await _clientService.GetClientAsync(clientId);
+        var client = await _clientService.GetClientAsync(clientId).ConfigureAwait(false);
         if (client is null)
         {
             return _errorResultProvider.GetAuthorizeErrorResult(DefaultAuthorizeErrorType.UnauthorizedClient, state: state, $"Client with [client_id] = [{clientId}] doesn't exist.");
@@ -56,7 +56,7 @@ public class DefaultLoginService : ILoginService
         Uri loginEndpointUri = new(loginEndpoint, UriKind.RelativeOrAbsolute);
         if (!loginEndpointUri.IsAbsoluteUri)
         {
-            Uri instanceUri = await _serverMetadataService.GetCurrentInstanceUriAsync();
+            Uri instanceUri = await _serverMetadataService.GetCurrentInstanceUriAsync().ConfigureAwait(false);
             loginEndpointUri = new Uri(instanceUri, loginEndpointUri);
         }
 

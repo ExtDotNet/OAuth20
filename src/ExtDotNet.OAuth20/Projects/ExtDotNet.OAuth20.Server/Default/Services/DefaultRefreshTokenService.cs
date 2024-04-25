@@ -21,7 +21,7 @@ public class DefaultRefreshTokenService : IRefreshTokenService
 
     public async Task<RefreshTokenResult> GetRefreshTokenAsync(AccessTokenResult accessToken)
     {
-        string refreshTokenValue = await _refreshTokenProvider.GetRefreshTokenValueAsync(accessToken);
+        string refreshTokenValue = await _refreshTokenProvider.GetRefreshTokenValueAsync(accessToken).ConfigureAwait(false);
 
         RefreshTokenResult refreshToken = new()
         {
@@ -29,7 +29,7 @@ public class DefaultRefreshTokenService : IRefreshTokenService
             AccessTokenValue = accessToken.Value
         };
 
-        await _refreshTokenStorage.AddRefreshTokenAsync(refreshToken);
+        await _refreshTokenStorage.AddRefreshTokenAsync(refreshToken).ConfigureAwait(false);
 
         return refreshToken;
     }
