@@ -136,7 +136,6 @@ public class DefaultScopeService : IScopeService
             foreach (string requestedScopeName in requestedScopeNames)
             {
                 Scope? requestedScopeModel = await _scopeDataSource.GetScopeAsync(requestedScopeName).ConfigureAwait(false);
-
                 if (requestedScopeModel is null)
                 {
                     throw new InvalidScopeException(
@@ -209,6 +208,7 @@ public class DefaultScopeService : IScopeService
     public async Task<ScopeResult> GetEndUserClientScopeAsync(string? requestedScope, EndUser endUser, Client client, string? state = null)
     {
         var endUserClientScopeResult = await _endUserClientScopeStorage.GetEndUserClientScopeResultAsync(endUser.Username, client.ClientId).ConfigureAwait(false);
+
         // TODO: detail the error message
         if (endUserClientScopeResult is null) throw new Exception();
 
@@ -216,6 +216,7 @@ public class DefaultScopeService : IScopeService
 
         string[] scopes = issuedScope.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         bool allScopesValid = await _scopeDataSource.AllScopesValidAsync(scopes).ConfigureAwait(false);
+
         // TODO: detail the error message
         if (!allScopesValid) throw new Exception();
 

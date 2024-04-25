@@ -11,7 +11,7 @@ public class ClientSecret : Int32IdEntityBase
 
     public string? Title { get; set; }
 
-    public string? Desription { get; set; }
+    public string? Description { get; set; }
 
     public int ClientId { get; set; }
 

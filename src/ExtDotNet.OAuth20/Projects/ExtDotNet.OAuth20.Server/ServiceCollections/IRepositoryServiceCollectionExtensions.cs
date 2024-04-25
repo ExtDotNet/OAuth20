@@ -544,7 +544,7 @@ public static class IRepositoryServiceCollectionExtensions
                             ClientId = clientEntityId,
                             Title = clientSecretOptions.Title,
                             Content = clientSecretOptions.Content,
-                            Desription = clientSecretOptions.Desription
+                            Description = clientSecretOptions.Desription
                         };
 
                         var clientSecretType = clientSecretTypeRepository.GetByNameAsync(clientSecretOptions.ClientSecretType).GetAwaiter().GetResult();
