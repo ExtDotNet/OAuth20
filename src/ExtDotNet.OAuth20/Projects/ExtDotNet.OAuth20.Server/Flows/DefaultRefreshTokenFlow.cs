@@ -8,7 +8,7 @@ using ExtDotNet.OAuth20.Server.Models.Flows.RefreshToken;
 using ExtDotNet.OAuth20.Server.Options;
 using Microsoft.Extensions.Options;
 
-namespace ExtDotNet.OAuth20.Server.Flows.RefreshToken;
+namespace ExtDotNet.OAuth20.Server.Flows;
 
 /// <summary>
 /// Description RFC6749: https://datatracker.ietf.org/doc/html/rfc6749#section-1.5

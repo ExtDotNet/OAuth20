@@ -10,7 +10,7 @@ using ExtDotNet.OAuth20.Server.Models.Flows.ClientCredentials;
 using ExtDotNet.OAuth20.Server.Options;
 using Microsoft.Extensions.Options;
 
-namespace ExtDotNet.OAuth20.Server.Flows.ClientCredentials;
+namespace ExtDotNet.OAuth20.Server.Flows;
 
 /// <summary>
 /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-4.4"/>

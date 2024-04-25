@@ -79,7 +79,7 @@ public class DefaultClientService : IClientService
         IEnumerable<ClientRedirectionEndpoint>? clientRedirectionEndpoints = await _clientDataSource.GetClientRedirectionEndpointsAsync(client.ClientId);
         IEnumerable<string>? redirectionEndpoints = clientRedirectionEndpoints?.Select(x => x.Value);
 
-        if (redirectionEndpoints is null || !redirectionEndpoints.Any())
+        if (redirectionEndpoints?.Any() is not true)
         {
             if (_options.Value.ClientRegistrationRedirectionEndpointsRequired)
             {

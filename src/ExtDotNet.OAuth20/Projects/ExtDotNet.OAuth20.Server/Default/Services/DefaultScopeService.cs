@@ -77,7 +77,7 @@ public class DefaultScopeService : IScopeService
             // or fail the request indicating an invalid scope.
             // * The authorization server SHOULD document its scope requirements and default value (if defined).
             // All information should be provided by a <see cref="IServerInformationService"/> instance.
-            if (_options.Value.ScopePreDefinedDefaultValue is null || !_options.Value.ScopePreDefinedDefaultValue.Any())
+            if (_options.Value.ScopePreDefinedDefaultValue?.Any() is not true)
             {
                 throw new InvalidScopeException(
                     $"There isn't any scope default value was pre-defined by the server but the Client with [client_id] = [{client.ClientId}]" +
