@@ -13,35 +13,27 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultAuthorizationCodeService : IAuthorizationCodeService
+public class DefaultAuthorizationCodeService(
+    IAuthorizationCodeStorage authorizationCodeStorage,
+    IAccessTokenService accessTokenService,
+    IDateTimeService dateTimeService,
+    IEndUserService endUserService,
+    IAuthorizationCodeProvider authorizationCodeProvider,
+    IOptions<OAuth20ServerOptions> options) : IAuthorizationCodeService
 {
-    private readonly IAuthorizationCodeStorage _authorizationCodeStorage;
-    private readonly IAccessTokenService _accessTokenService;
-    private readonly IDateTimeService _dateTimeService;
-    private readonly IEndUserService _endUserService;
-    private readonly IAuthorizationCodeProvider _authorizationCodeProvider;
-    private readonly IOptions<OAuth20ServerOptions> _options;
-
-    public DefaultAuthorizationCodeService(
-        IAuthorizationCodeStorage authorizationCodeStorage,
-        IAccessTokenService accessTokenService,
-        IDateTimeService dateTimeService,
-        IEndUserService endUserService,
-        IAuthorizationCodeProvider authorizationCodeProvider,
-        IOptions<OAuth20ServerOptions> options)
-    {
-        _authorizationCodeStorage = authorizationCodeStorage;
-        _accessTokenService = accessTokenService;
-        _dateTimeService = dateTimeService;
-        _endUserService = endUserService;
-        _authorizationCodeProvider = authorizationCodeProvider;
-        _options = options;
-    }
+    private readonly IAuthorizationCodeStorage _authorizationCodeStorage = authorizationCodeStorage ?? throw new ArgumentNullException(nameof(authorizationCodeStorage));
+    private readonly IAccessTokenService _accessTokenService = accessTokenService ?? throw new ArgumentNullException(nameof(accessTokenService));
+    private readonly IDateTimeService _dateTimeService = dateTimeService ?? throw new ArgumentNullException(nameof(dateTimeService));
+    private readonly IEndUserService _endUserService = endUserService ?? throw new ArgumentNullException(nameof(endUserService));
+    private readonly IAuthorizationCodeProvider _authorizationCodeProvider = authorizationCodeProvider ?? throw new ArgumentNullException(nameof(authorizationCodeProvider));
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     public async Task<string> GetAuthorizationCodeAsync(AuthorizeArguments args, EndUser endUser, Client client, string redirectUri, string issuedScope, bool issuedScopeDifferent)
     {
         DateTime currentDateTime = _dateTimeService.GetCurrentDateTime();
-        string authorizationCodeValue = _authorizationCodeProvider.GetAuthorizationCodeValue(args, endUser, client, redirectUri, issuedScope);
+        string authorizationCodeValue = await _authorizationCodeProvider
+            .GetAuthorizationCodeValueAsync(args, endUser, client, redirectUri, issuedScope)
+            .ConfigureAwait(false);
 
         AuthorizationCodeResult authorizationCode = new()
         {

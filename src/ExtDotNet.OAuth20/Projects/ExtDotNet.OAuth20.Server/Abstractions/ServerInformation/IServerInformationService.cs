@@ -9,7 +9,7 @@ public interface IServerInformationService
     /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-3.3"/>
     /// All information should be provided by a <see cref="IServerInformationService"/> instance.
     /// </summary>
-    public Task<IDictionary<string, string>?> GetScopeAdditionalInformationAsync();
+    public ValueTask<IDictionary<string, string>?> GetScopeAdditionalInformationAsync();
 
     /// <summary>
     /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-3.3"/>
@@ -17,7 +17,7 @@ public interface IServerInformationService
     /// All information should be provided by a <see cref="IServerInformationService"/> instance.
     /// </summary>
     /// <returns></returns>
-    public Task<string?> GetScopeRequirementsInformationAsync();
+    public ValueTask<string?> GetScopeRequirementsInformationAsync();
 
     /// <summary>
     /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-3.3"/>
@@ -25,13 +25,13 @@ public interface IServerInformationService
     /// All information should be provided by a <see cref="IServerInformationService"/> instance.
     /// </summary>
     /// <returns></returns>
-    public Task<string?> GetScopeDefaultValueInformationAsync();
+    public ValueTask<string?> GetScopeDefaultValueInformationAsync();
 
     /// <summary>
     /// All information should be provided by a
     /// <see cref="IServerInformationService"/> instance.
     /// </summary>
-    public Task<IDictionary<string, string>?> GetAuthorizationCodeAdditionalInformationAsync();
+    public ValueTask<IDictionary<string, string>?> GetAuthorizationCodeAdditionalInformationAsync();
 
     /// <summary>
     /// The client should avoid making assumptions about code
@@ -39,5 +39,5 @@ public interface IServerInformationService
     /// any value it issues. All information should be provided by a
     /// <see cref="IServerInformationService"/> instance.
     /// </summary>
-    public Task<string> GetAuthorizationCodeSizeSymbolsInformationAsync();
+    public ValueTask<string> GetAuthorizationCodeSizeSymbolsInformationAsync();
 }

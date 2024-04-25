@@ -6,21 +6,15 @@ using ExtDotNet.OAuth20.Server.Abstractions.ServerInformation;
 
 namespace ExtDotNet.OAuth20.Server.Default.ServerInformation;
 
-public class DefaultServerInformationService : IServerInformationService
+public class DefaultServerInformationService(IServerInformationMetadata serverInformationMetadata) : IServerInformationService
 {
-    private readonly IServerInformationMetadata _serverInformationMetadata;
+    private readonly IServerInformationMetadata _serverInformationMetadata = serverInformationMetadata ??
+            throw new ArgumentNullException(nameof(serverInformationMetadata));
 
-    public DefaultServerInformationService(IServerInformationMetadata serverInformationMetadata)
-    {
-        _serverInformationMetadata = serverInformationMetadata;
-    }
+    public ValueTask<IDictionary<string, string>?> GetAuthorizationCodeAdditionalInformationAsync() =>
+        ValueTask.FromResult(_serverInformationMetadata.AuthorizationCodeAdditional);
 
-    public Task<IDictionary<string, string>?> GetAuthorizationCodeAdditionalInformationAsync()
-    {
-        return Task.FromResult(_serverInformationMetadata.AuthorizationCodeAdditional);
-    }
-
-    public Task<string> GetAuthorizationCodeSizeSymbolsInformationAsync()
+    public ValueTask<string> GetAuthorizationCodeSizeSymbolsInformationAsync()
     {
         if (_serverInformationMetadata.AuthorizationCodeSizeSymbols is null)
         {
@@ -30,21 +24,15 @@ public class DefaultServerInformationService : IServerInformationService
                 "the size of any value it issues.");
         }
 
-        return Task.FromResult(_serverInformationMetadata.AuthorizationCodeSizeSymbols);
+        return ValueTask.FromResult(_serverInformationMetadata.AuthorizationCodeSizeSymbols);
     }
 
-    public Task<IDictionary<string, string>?> GetScopeAdditionalInformationAsync()
-    {
-        return Task.FromResult(_serverInformationMetadata.ScopeAdditional);
-    }
+    public ValueTask<IDictionary<string, string>?> GetScopeAdditionalInformationAsync() =>
+        ValueTask.FromResult(_serverInformationMetadata.ScopeAdditional);
 
-    public Task<string?> GetScopeDefaultValueInformationAsync()
-    {
-        return Task.FromResult(_serverInformationMetadata.ScopeDefaultValue);
-    }
+    public ValueTask<string?> GetScopeDefaultValueInformationAsync() =>
+        ValueTask.FromResult(_serverInformationMetadata.ScopeDefaultValue);
 
-    public Task<string?> GetScopeRequirementsInformationAsync()
-    {
-        return Task.FromResult(_serverInformationMetadata.ScopeRequirements);
-    }
+    public ValueTask<string?> GetScopeRequirementsInformationAsync() =>
+        ValueTask.FromResult(_serverInformationMetadata.ScopeRequirements);
 }

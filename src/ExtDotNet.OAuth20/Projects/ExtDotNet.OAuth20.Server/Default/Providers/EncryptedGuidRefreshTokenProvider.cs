@@ -3,34 +3,16 @@
 
 using ExtDotNet.OAuth20.Server.Abstractions.Providers;
 using ExtDotNet.OAuth20.Server.Models;
-using System.Text;
+using ExtDotNet.OAuth20.Server.Options;
+using ExtDotNet.OAuth20.Server.Utilities;
+using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Providers;
 
-public class EncryptedGuidRefreshTokenProvider : IRefreshTokenProvider
+public class EncryptedGuidRefreshTokenProvider(IOptions<OAuth20ServerOptions> options) : IRefreshTokenProvider
 {
-    private static readonly string _refreshTokenSalt = Guid.NewGuid().ToString("N");
-    private static readonly string _encryptionKey = Guid.NewGuid().ToString("N");
+    private readonly string? _encryptionKey = options.Value?.Flows?.RefreshTokenEncryptionKey;
 
-    public Task<string> GetRefreshTokenValueAsync(AccessTokenResult accessToken)
-    {
-        string guid = Guid.NewGuid().ToString("N");
-
-        string originRefreshToken = $"{_refreshTokenSalt}{guid}";
-
-        StringBuilder sb = new();
-
-        for (int i = 0, j = 0; i < originRefreshToken.Length; i++, j++)
-        {
-            if (j == _encryptionKey.Length) j = 0;
-
-            int encryptedSymbol = originRefreshToken[i] ^ _encryptionKey[j];
-
-            sb.Append(encryptedSymbol);
-        }
-
-        string encryptedRfreshToken = sb.ToString();
-
-        return Task.FromResult(encryptedRfreshToken);
-    }
+    public ValueTask<string> GetRefreshTokenValueAsync(AccessTokenResult _) =>
+        ValueTask.FromResult(EncryptionUtilities.EncryptString(Guid.NewGuid().ToString("N"), _encryptionKey));
 }

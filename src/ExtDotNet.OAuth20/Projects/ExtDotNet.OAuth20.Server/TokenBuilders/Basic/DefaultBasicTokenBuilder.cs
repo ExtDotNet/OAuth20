@@ -13,7 +13,7 @@ namespace ExtDotNet.OAuth20.Server.TokenBuilders.Basic;
 /// </summary>
 public class DefaultBasicTokenBuilder : IBasicTokenBuilder
 {
-    public Task<string> BuildTokenAsync(TokenContext tokenBuilderContext)
+    public ValueTask<string> BuildTokenAsync(TokenContext tokenBuilderContext)
     {
         StringBuilder sb = new("Type:Basic::Encoding:Base64");
 
@@ -75,6 +75,6 @@ public class DefaultBasicTokenBuilder : IBasicTokenBuilder
         byte[] binaryAccessToken = Encoding.ASCII.GetBytes(originAccessToken);
         string accessToken = Convert.ToBase64String(binaryAccessToken);
 
-        return Task.FromResult(accessToken);
+        return ValueTask.FromResult(accessToken);
     }
 }

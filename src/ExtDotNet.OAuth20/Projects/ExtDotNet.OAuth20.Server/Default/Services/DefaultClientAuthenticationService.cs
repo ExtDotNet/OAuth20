@@ -8,20 +8,14 @@ using ExtDotNet.OAuth20.Server.Domain;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultClientAuthenticationService : IClientAuthenticationService
+public class DefaultClientAuthenticationService(IClientSecretReaderProvider clientSecretReaderProvider, IClientService clientService) : IClientAuthenticationService
 {
-    private readonly IClientSecretReaderSelector _clientSecretReaderSelector;
-    private readonly IClientService _clientService;
-
-    public DefaultClientAuthenticationService(IClientSecretReaderSelector clientSecretReaderSelector, IClientService clientService)
-    {
-        _clientSecretReaderSelector = clientSecretReaderSelector;
-        _clientService = clientService;
-    }
+    private readonly IClientSecretReaderProvider _clientSecretReaderProvider = clientSecretReaderProvider ?? throw new ArgumentNullException(nameof(clientSecretReaderProvider));
+    private readonly IClientService _clientService = clientService ?? throw new ArgumentNullException(nameof(_clientService));
 
     public async Task<Client?> AuthenticateClientAsync(HttpContext httpContext)
     {
-        var clientSecretReaders = await _clientSecretReaderSelector.GetClientSecretReadersAsync().ConfigureAwait(false);
+        var clientSecretReaders = await _clientSecretReaderProvider.GetAllClientSecretReadersAsync().ConfigureAwait(false);
 
         if (!clientSecretReaders.Any())
         {

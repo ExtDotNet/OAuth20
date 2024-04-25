@@ -16,13 +16,9 @@ public class DefaultClientSecretService : IClientSecretService
         _clientSecretDataSource = clientSecretDataSource;
     }
 
-    public async Task<ClientSecret?> GetClientSecretAsync(string type, string clientSecretContent)
-    {
-        return await _clientSecretDataSource.GetClientSecretAsync(type, clientSecretContent).ConfigureAwait(false);
-    }
+    public async Task<ClientSecret?> GetClientSecretAsync(string type, string clientSecretContent) =>
+         await _clientSecretDataSource.GetClientSecretAsync(type, clientSecretContent).ConfigureAwait(false);
 
-    public async Task<ClientSecret?> GetEmptyClientSecretAsync(string type, Client client)
-    {
-        return await _clientSecretDataSource.GetEmptyClientSecretAsync(type, client).ConfigureAwait(false);
-    }
+    public async Task<ClientSecret?> GetEmptyClientSecretAsync(string type, Client client) =>
+        await _clientSecretDataSource.GetEmptyClientSecretAsync(type, client).ConfigureAwait(false);
 }

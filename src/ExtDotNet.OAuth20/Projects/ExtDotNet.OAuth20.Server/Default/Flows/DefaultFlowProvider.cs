@@ -5,16 +5,10 @@ using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 
 namespace ExtDotNet.OAuth20.Server.Default.Flows;
 
-public class DefaultFlowProvider : IFlowProvider
+public class DefaultFlowProvider(IServiceProvider serviceProvider, IFlowMetadataCollection flowMetadataCollection) : IFlowProvider
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IFlowMetadataCollection _flowMetadataCollection;
-
-    public DefaultFlowProvider(IServiceProvider serviceProvider, IFlowMetadataCollection flowMetadataCollection)
-    {
-        _serviceProvider = serviceProvider;
-        _flowMetadataCollection = flowMetadataCollection;
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+    private readonly IFlowMetadataCollection _flowMetadataCollection = flowMetadataCollection ?? throw new ArgumentNullException(nameof(flowMetadataCollection));
 
     public bool TryGetFlowInstanceByGrantTypeName(string grantType, out IFlow? flow)
     {

@@ -7,23 +7,16 @@ using ExtDotNet.OAuth20.Server.Domain;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultResourceService : IResourceService
+public class DefaultResourceService(IResourceDataSource resourceDataSource) : IResourceService
 {
-    private readonly IResourceDataSource _resourceDataSource;
+    private readonly IResourceDataSource _resourceDataSource = resourceDataSource ?? throw new ArgumentNullException(nameof(resourceDataSource));
 
-    public DefaultResourceService(IResourceDataSource resourceDataSource)
-    {
-        _resourceDataSource = resourceDataSource;
-    }
-
-    public async Task<Resource> GetResourceByScopeAsync(Scope scope)
-    {
-        return await _resourceDataSource.GetResourceByScopeAsync(scope).ConfigureAwait(false);
-    }
+    public async Task<Resource> GetResourceByScopeAsync(Scope scope) =>
+        await _resourceDataSource.GetResourceByScopeAsync(scope).ConfigureAwait(false);
 
     public async Task<IEnumerable<Resource>> GetResourcesByScopesAsync(IEnumerable<Scope> scopes)
     {
-        Dictionary<int, Resource> resources = new();
+        Dictionary<int, Resource> resources = [];
 
         foreach (var scope in scopes)
         {
@@ -36,8 +29,6 @@ public class DefaultResourceService : IResourceService
         return resources.Select(x => x.Value);
     }
 
-    public async Task<IEnumerable<SigningCredentialsAlgorithm>> GetResourceSigningCredentialsAlgorithmsAsync(Resource resource)
-    {
-        return await _resourceDataSource.GetResourceSigningCredentialsAlgorithmsAsync(resource).ConfigureAwait(false);
-    }
+    public async Task<IEnumerable<SigningCredentialsAlgorithm>> GetResourceSigningCredentialsAlgorithmsAsync(Resource resource) =>
+        await _resourceDataSource.GetResourceSigningCredentialsAlgorithmsAsync(resource).ConfigureAwait(false);
 }

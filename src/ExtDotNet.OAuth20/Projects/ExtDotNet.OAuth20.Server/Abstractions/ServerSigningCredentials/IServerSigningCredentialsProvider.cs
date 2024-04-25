@@ -10,5 +10,5 @@ public interface IServerSigningCredentialsProvider
 {
     public Task<IEnumerable<SigningCredentials>> GetSigningCredentialsAsync(IEnumerable<SigningCredentialsAlgorithm> signingCredentialsAlgorithms);
 
-    public Task<SigningCredentials> GetDefaultSigningCredentialsAsync();
+    public ValueTask<SigningCredentials> GetDefaultSigningCredentialsAsync();
 }

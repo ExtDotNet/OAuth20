@@ -10,4 +10,6 @@ public class UtcDateTimeService : IDateTimeService
     public DateTime GetCurrentDateTime() => DateTime.UtcNow;
 
     public string ConvertDateTimeToString(DateTime dateTime) => dateTime.ToString();
+
+    public DateTimeOffset GetCurrentDateTimeOffset() => DateTimeOffset.UtcNow;
 }

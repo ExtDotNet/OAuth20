@@ -8,16 +8,10 @@ using ExtDotNet.OAuth20.Server.Models;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultRefreshTokenService : IRefreshTokenService
+public class DefaultRefreshTokenService(IRefreshTokenStorage refreshTokenStorage, IRefreshTokenProvider refreshTokenProvider) : IRefreshTokenService
 {
-    private readonly IRefreshTokenStorage _refreshTokenStorage;
-    private readonly IRefreshTokenProvider _refreshTokenProvider;
-
-    public DefaultRefreshTokenService(IRefreshTokenStorage refreshTokenStorage, IRefreshTokenProvider refreshTokenProvider)
-    {
-        _refreshTokenStorage = refreshTokenStorage;
-        _refreshTokenProvider = refreshTokenProvider;
-    }
+    private readonly IRefreshTokenStorage _refreshTokenStorage = refreshTokenStorage ?? throw new ArgumentNullException(nameof(refreshTokenStorage));
+    private readonly IRefreshTokenProvider _refreshTokenProvider = refreshTokenProvider ?? throw new ArgumentNullException(nameof(refreshTokenProvider));
 
     public async Task<RefreshTokenResult> GetRefreshTokenAsync(AccessTokenResult accessToken)
     {

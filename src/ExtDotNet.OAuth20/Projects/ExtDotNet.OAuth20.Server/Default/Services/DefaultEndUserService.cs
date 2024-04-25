@@ -9,21 +9,14 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultEndUserService : IEndUserService
+public class DefaultEndUserService(
+    IHttpContextAccessor httpContextAccessor,
+    IEndUserDataSource endUserDataSource,
+    IPasswordHashingService passwordHashingService) : IEndUserService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IEndUserDataSource _endUserDataSource;
-    private readonly IPasswordHashingService _passwordHashingService;
-
-    public DefaultEndUserService(
-        IHttpContextAccessor httpContextAccessor,
-        IEndUserDataSource endUserDataSource,
-        IPasswordHashingService passwordHashingService)
-    {
-        _httpContextAccessor = httpContextAccessor;
-        _endUserDataSource = endUserDataSource;
-        _passwordHashingService = passwordHashingService;
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+    private readonly IEndUserDataSource _endUserDataSource = endUserDataSource ?? throw new ArgumentNullException(nameof(endUserDataSource));
+    private readonly IPasswordHashingService _passwordHashingService = passwordHashingService ?? throw new ArgumentNullException(nameof(passwordHashingService));
 
     public async Task<EndUser?> GetCurrentEndUserAsync(string? state = null)
     {
@@ -36,10 +29,8 @@ public class DefaultEndUserService : IEndUserService
         return await GetEndUserAsync(username).ConfigureAwait(false);
     }
 
-    public async Task<EndUser?> GetEndUserAsync(string username)
-    {
-        return await _endUserDataSource.GetEndUserAsync(username).ConfigureAwait(false);
-    }
+    public async Task<EndUser?> GetEndUserAsync(string username) =>
+        await _endUserDataSource.GetEndUserAsync(username).ConfigureAwait(false);
 
     public async Task<EndUser?> GetEndUserAsync(string username, string password)
     {

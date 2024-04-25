@@ -8,5 +8,5 @@ namespace ExtDotNet.OAuth20.Server.Abstractions.Providers;
 
 public interface IAuthorizationCodeProvider
 {
-    public string GetAuthorizationCodeValue(AuthorizeArguments args, EndUser endUser, Client client, string redirectUri, string scope);
+    public ValueTask<string> GetAuthorizationCodeValueAsync(AuthorizeArguments args, EndUser endUser, Client client, string redirectUri, string scope);
 }

@@ -5,5 +5,5 @@ namespace ExtDotNet.OAuth20.Server.Abstractions.ClientSecretReaders;
 
 public interface IClientSecretReaderProvider
 {
-    public IEnumerable<IClientSecretReader> GetAllClientSecretReaderInstances();
+    public ValueTask<IEnumerable<IClientSecretReader>> GetAllClientSecretReadersAsync();
 }

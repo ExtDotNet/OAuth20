@@ -10,23 +10,18 @@ using ExtDotNet.OAuth20.Server.Models;
 
 namespace ExtDotNet.OAuth20.Server.Default.Providers;
 
-public class DefaultTokenProvider : ITokenProvider
+public class DefaultTokenProvider(
+    ITokenBuilderSelector tokenBuilderSelector,
+    IClientService clientService) : ITokenProvider
 {
-    private readonly ITokenBuilderSelector _tokenBuilderSelector;
-    private readonly IClientService _clientService;
+    private readonly ITokenBuilderSelector _tokenBuilderSelector = tokenBuilderSelector ??
+            throw new ArgumentNullException(nameof(tokenBuilderSelector));
 
-    public DefaultTokenProvider(
-        ITokenBuilderSelector tokenBuilderSelector,
-        IClientService clientService)
-    {
-        _tokenBuilderSelector = tokenBuilderSelector;
-        _clientService = clientService;
-    }
+    private readonly IClientService _clientService = clientService ??
+            throw new ArgumentNullException(nameof(clientService));
 
-    public async Task<TokenType> GetTokenTypeAsync(Client client)
-    {
-        return await _clientService.GetTokenType(client).ConfigureAwait(false);
-    }
+    public async Task<TokenType> GetTokenTypeAsync(Client client) =>
+        await _clientService.GetTokenType(client).ConfigureAwait(false);
 
     public async Task<string> GetTokenValueAsync(TokenType tokenType, TokenContext tokenContext)
     {

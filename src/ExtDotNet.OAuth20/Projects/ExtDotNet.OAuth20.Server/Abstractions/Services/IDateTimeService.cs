@@ -8,4 +8,6 @@ public interface IDateTimeService
     public DateTime GetCurrentDateTime();
 
     public string ConvertDateTimeToString(DateTime dateTime);
+
+    public DateTimeOffset GetCurrentDateTimeOffset();
 }

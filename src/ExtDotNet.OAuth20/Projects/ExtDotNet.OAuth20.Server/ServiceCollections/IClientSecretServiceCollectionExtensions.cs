@@ -21,7 +21,6 @@ public static class IClientSecretServiceCollectionExtensions
         services.SetOAuth20DefaultClientSecretTypes();
         services.SetOAuth20ClientSecretTypesFromConfiguration();
 
-        services.AddScoped<IClientSecretReaderSelector, DefaultClientSecretReaderSelector>();
         services.AddScoped<IClientSecretReaderProvider, DefaultClientSecretReaderProvider>();
 
         return services;

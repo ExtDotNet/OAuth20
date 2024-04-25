@@ -12,36 +12,24 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultAccessTokenService : IAccessTokenService
+public class DefaultAccessTokenService(
+    IAccessTokenStorage tokenStorage,
+    IServerMetadataService serverMetadataService,
+    IDateTimeService dateTimeService,
+    ITokenTypeDataSource tokenTypeDataSource,
+    ITokenProvider tokenProvider,
+    IScopeService scopeService,
+    IResourceService resourceService,
+    IOptions<OAuth20ServerOptions> options) : IAccessTokenService
 {
-    private readonly IAccessTokenStorage _tokenStorage;
-    private readonly IServerMetadataService _serverMetadataService;
-    private readonly IDateTimeService _dateTimeService;
-    private readonly ITokenTypeDataSource _tokenTypeDataSource;
-    private readonly ITokenProvider _tokenProvider;
-    private readonly IScopeService _scopeService;
-    private readonly IResourceService _resourceService;
-    private readonly IOptions<OAuth20ServerOptions> _options;
-
-    public DefaultAccessTokenService(
-        IAccessTokenStorage tokenStorage,
-        IServerMetadataService serverMetadataService,
-        IDateTimeService dateTimeService,
-        ITokenTypeDataSource tokenTypeDataSource,
-        ITokenProvider tokenProvider,
-        IScopeService scopeService,
-        IResourceService resourceService,
-        IOptions<OAuth20ServerOptions> options)
-    {
-        _tokenStorage = tokenStorage;
-        _serverMetadataService = serverMetadataService;
-        _dateTimeService = dateTimeService;
-        _tokenTypeDataSource = tokenTypeDataSource;
-        _tokenProvider = tokenProvider;
-        _scopeService = scopeService;
-        _resourceService = resourceService;
-        _options = options;
-    }
+    private readonly IAccessTokenStorage _tokenStorage = tokenStorage ?? throw new ArgumentNullException(nameof(tokenStorage));
+    private readonly IServerMetadataService _serverMetadataService = serverMetadataService ?? throw new ArgumentNullException(nameof(serverMetadataService));
+    private readonly IDateTimeService _dateTimeService = dateTimeService ?? throw new ArgumentNullException(nameof(dateTimeService));
+    private readonly ITokenTypeDataSource _tokenTypeDataSource = tokenTypeDataSource ?? throw new ArgumentNullException(nameof(tokenTypeDataSource));
+    private readonly ITokenProvider _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
+    private readonly IScopeService _scopeService = scopeService ?? throw new ArgumentNullException(nameof(scopeService));
+    private readonly IResourceService _resourceService = resourceService ?? throw new ArgumentNullException(nameof(resourceService));
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     public async Task<AccessTokenResult> GetAccessTokenAsync(string issuedScope, bool issuedScopeDifferent, Client client, string? redirectUri = null, EndUser? endUser = null)
     {

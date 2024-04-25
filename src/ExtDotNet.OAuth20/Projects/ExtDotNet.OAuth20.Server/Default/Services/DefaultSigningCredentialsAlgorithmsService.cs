@@ -7,14 +7,9 @@ using ExtDotNet.OAuth20.Server.Domain;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultSigningCredentialsAlgorithmsService : ISigningCredentialsAlgorithmsService
+public class DefaultSigningCredentialsAlgorithmsService(IResourceService resourceService) : ISigningCredentialsAlgorithmsService
 {
-    private readonly IResourceService _resourceService;
-
-    public DefaultSigningCredentialsAlgorithmsService(IResourceService resourceService)
-    {
-        _resourceService = resourceService;
-    }
+    private readonly IResourceService _resourceService = resourceService ?? throw new ArgumentNullException(nameof(resourceService));
 
     public async Task<IEnumerable<SigningCredentialsAlgorithm>> GetSigningCredentialsAlgorithmsForScopesAsync(IEnumerable<Scope> scopes)
     {

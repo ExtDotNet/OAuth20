@@ -7,18 +7,12 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultServerUriService : IServerUriService
+public class DefaultServerUriService(
+    IServerMetadataService serverMetadataService,
+    IOptions<OAuth20ServerOptions> options) : IServerUriService
 {
-    private readonly IServerMetadataService _serverMetadataService;
-    private readonly IOptions<OAuth20ServerOptions> _options;
-
-    public DefaultServerUriService(
-        IServerMetadataService serverMetadataService,
-        IOptions<OAuth20ServerOptions> options)
-    {
-        _serverMetadataService = serverMetadataService;
-        _options = options;
-    }
+    private readonly IServerMetadataService _serverMetadataService = serverMetadataService ?? throw new ArgumentNullException(nameof(serverMetadataService));
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     public async Task<Uri> GetServerAbsoluteUri(Uri relativeUri)
     {

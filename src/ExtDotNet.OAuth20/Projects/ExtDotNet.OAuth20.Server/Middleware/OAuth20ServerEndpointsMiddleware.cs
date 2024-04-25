@@ -8,14 +8,9 @@ using ExtDotNet.OAuth20.Server.Abstractions.Errors.Exceptions;
 
 namespace ExtDotNet.OAuth20.Server.Middleware;
 
-public class OAuth20ServerEndpointsMiddleware
+public class OAuth20ServerEndpointsMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public OAuth20ServerEndpointsMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
+    private readonly RequestDelegate _next = next;
 
     public async Task InvokeAsync(HttpContext httpContext, IEndpointRouter router, ITlsValidator tlsValidator, IErrorResultProvider errorResultProvider)
     {

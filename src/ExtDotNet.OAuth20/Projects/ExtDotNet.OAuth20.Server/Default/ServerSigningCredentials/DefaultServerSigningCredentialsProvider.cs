@@ -7,14 +7,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ExtDotNet.OAuth20.Server.Default.ServerSigningCredentials;
 
-public class DefaultServerSigningCredentialsProvider : IServerSigningCredentialsProvider
+public class DefaultServerSigningCredentialsProvider(IServerSigningCredentialsCollection serverSigningCredentialsCollection)
+    : IServerSigningCredentialsProvider
 {
-    private readonly IServerSigningCredentialsCollection _serverSigningCredentialsCollection;
-
-    public DefaultServerSigningCredentialsProvider(IServerSigningCredentialsCollection serverSigningCredentialsCollection)
-    {
-        _serverSigningCredentialsCollection = serverSigningCredentialsCollection;
-    }
+    private readonly IServerSigningCredentialsCollection _serverSigningCredentialsCollection = serverSigningCredentialsCollection ??
+        throw new ArgumentNullException(nameof(serverSigningCredentialsCollection));
 
     public Task<IEnumerable<SigningCredentials>> GetSigningCredentialsAsync(IEnumerable<SigningCredentialsAlgorithm> signingCredentialsAlgorithms)
     {
@@ -33,8 +30,6 @@ public class DefaultServerSigningCredentialsProvider : IServerSigningCredentials
         return Task.FromResult<IEnumerable<SigningCredentials>>(signingCredentialsList);
     }
 
-    public Task<SigningCredentials> GetDefaultSigningCredentialsAsync()
-    {
-        return Task.FromResult(_serverSigningCredentialsCollection.DefaultSigningCredentials);
-    }
+    public ValueTask<SigningCredentials> GetDefaultSigningCredentialsAsync() =>
+        ValueTask.FromResult(_serverSigningCredentialsCollection.DefaultSigningCredentials);
 }

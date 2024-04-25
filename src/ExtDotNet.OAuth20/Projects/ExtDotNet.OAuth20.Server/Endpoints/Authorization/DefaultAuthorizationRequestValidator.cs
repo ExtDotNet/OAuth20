@@ -7,14 +7,9 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Endpoints.Authorization;
 
-public class DefaultAuthorizationRequestValidator : IRequestValidator<IAuthorizationEndpoint>
+public class DefaultAuthorizationRequestValidator(IOptions<OAuth20ServerOptions> options) : IRequestValidator<IAuthorizationEndpoint>
 {
-    private readonly IOptions<OAuth20ServerOptions> _options;
-
-    public DefaultAuthorizationRequestValidator(IOptions<OAuth20ServerOptions> options)
-    {
-        _options = options;
-    }
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     public OAuth20ValidationResult TryValidate(HttpContext httpContext)
     {

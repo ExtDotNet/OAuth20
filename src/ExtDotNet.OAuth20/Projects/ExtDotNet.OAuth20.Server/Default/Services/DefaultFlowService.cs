@@ -10,22 +10,14 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultFlowService : IFlowService
+public class DefaultFlowService(IFlowDataSource flowDataSource, IOptions<OAuth20ServerOptions> options) : IFlowService
 {
-    public DefaultFlowService(IFlowDataSource flowDataSource, IOptions<OAuth20ServerOptions> options)
-    {
-        FlowDataSource = flowDataSource;
-        Options = options;
-    }
+    protected IFlowDataSource FlowDataSource { get; set; } = flowDataSource ?? throw new ArgumentNullException(nameof(flowDataSource));
 
-    protected IFlowDataSource FlowDataSource { get; set; }
+    protected IOptions<OAuth20ServerOptions> Options { get; } = options ?? throw new ArgumentNullException(nameof(options));
 
-    protected IOptions<OAuth20ServerOptions> Options { get; }
-
-    public async Task<Flow?> GetFlowAsync(string name)
-    {
-        return await FlowDataSource.GetFlowAsync(name).ConfigureAwait(false);
-    }
+    public async Task<Flow?> GetFlowAsync(string name) =>
+        await FlowDataSource.GetFlowAsync(name).ConfigureAwait(false);
 
     public virtual async Task<Flow?> GetFlowAsync<T>()
         where T : IFlow

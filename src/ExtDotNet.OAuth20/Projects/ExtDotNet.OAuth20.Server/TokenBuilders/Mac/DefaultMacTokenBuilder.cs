@@ -10,7 +10,7 @@ namespace ExtDotNet.OAuth20.Server.TokenBuilders.Mac;
 /// </summary>
 public class DefaultMacTokenBuilder : IMacTokenBuilder
 {
-    public Task<string> BuildTokenAsync(TokenContext tokenBuilderContext)
+    public ValueTask<string> BuildTokenAsync(TokenContext tokenBuilderContext)
     {
         throw new NotImplementedException();
     }

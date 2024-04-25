@@ -7,14 +7,9 @@ using System.Text.Json;
 
 namespace ExtDotNet.OAuth20.Server.Default.Interceptors;
 
-public class LoggingScopeInterceptor : IScopeInterceptor
+public class LoggingScopeInterceptor(ILogger<LoggingScopeInterceptor> logger) : IScopeInterceptor
 {
-    private readonly ILogger<LoggingScopeInterceptor> _logger;
-
-    public LoggingScopeInterceptor(ILogger<LoggingScopeInterceptor> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<LoggingScopeInterceptor> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public Task<IEnumerable<Scope>> OnExecutedAsync(IEnumerable<Scope> issuedScope, Client client, string? state = null)
     {

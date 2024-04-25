@@ -2,17 +2,14 @@
 // ExtDotNet licenses this file to you under the MIT license.
 
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
+using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultServerMetadataService : IServerMetadataService
+public class DefaultServerMetadataService(IHttpContextAccessor httpContextAccessor) : IServerMetadataService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public DefaultServerMetadataService(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ??
+        throw new ArgumentNullException(nameof(httpContextAccessor));
 
     public Task<Uri> GetCurrentInstanceUriAsync()
     {

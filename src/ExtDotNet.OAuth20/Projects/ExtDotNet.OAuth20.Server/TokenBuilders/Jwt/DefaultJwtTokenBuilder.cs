@@ -37,7 +37,7 @@ public class DefaultJwtTokenBuilder : IJwtTokenBuilder
         _serverSigningCredentialsProvider = serverSigningCredentialsProvider;
     }
 
-    public async Task<string> BuildTokenAsync(Models.TokenContext tokenBuilderContext)
+    public async ValueTask<string> BuildTokenAsync(Models.TokenContext tokenBuilderContext)
     {
         var jwtHeader = await BuildJwtTokenHeaderAsync(tokenBuilderContext.Scopes).ConfigureAwait(false);
         var jwtPayload = await BuildJwtTokenPayloadAsync(tokenBuilderContext).ConfigureAwait(false);
@@ -48,15 +48,15 @@ public class DefaultJwtTokenBuilder : IJwtTokenBuilder
         return jwtSecurityTokenString;
     }
 
-    private static Task<string> BuildJwtSecurityTokenStringAsync(JwtSecurityToken jwtSecurityToken)
+    private static ValueTask<string> BuildJwtSecurityTokenStringAsync(JwtSecurityToken jwtSecurityToken)
     {
         JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
         string jwtSecurityTokenString = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
 
-        return Task.FromResult(jwtSecurityTokenString);
+        return ValueTask.FromResult(jwtSecurityTokenString);
     }
 
-    private static Task<JwtPayload> BuildJwtTokenPayloadAsync(Models.TokenContext tokenBuilderContext)
+    private static ValueTask<JwtPayload> BuildJwtTokenPayloadAsync(Models.TokenContext tokenBuilderContext)
     {
         JwtPayload jwtPayload = new(
             issuer: tokenBuilderContext.Issuer,
@@ -104,19 +104,18 @@ public class DefaultJwtTokenBuilder : IJwtTokenBuilder
             jwtPayload.AddClaim(new Claim("scope", scope.Name));
         }
 
-        return Task.FromResult(jwtPayload);
+        return ValueTask.FromResult(jwtPayload);
     }
 
-    private Task<JwtSecurityToken> BuildJwtSecurityTokenAsync(JwtHeader jwtHeader, JwtPayload jwtPayload)
-    {
-        return Task.FromResult(new JwtSecurityToken(jwtHeader, jwtPayload));
-    }
+    private static ValueTask<JwtSecurityToken> BuildJwtSecurityTokenAsync(JwtHeader jwtHeader, JwtPayload jwtPayload) =>
+         ValueTask.FromResult(new JwtSecurityToken(jwtHeader, jwtPayload));
 
     private async Task<JwtHeader> BuildJwtTokenHeaderAsync(IEnumerable<Scope> scopes)
     {
         var signingCredentialsAlgorithms = await _signingCredentialsAlgorithmsService
             .GetSigningCredentialsAlgorithmsForScopesAsync(scopes)
             .ConfigureAwait(false);
+
         var signingCredentialsList = await _serverSigningCredentialsProvider
             .GetSigningCredentialsAsync(signingCredentialsAlgorithms)
             .ConfigureAwait(false);

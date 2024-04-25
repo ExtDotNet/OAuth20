@@ -13,24 +13,16 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultScopeService : IScopeService
+public class DefaultScopeService(
+    IScopeDataSource scopeDataSource,
+    IEndUserClientScopeStorage endUserClientScopeStorage,
+    IOptions<OAuth20ServerOptions> options,
+    IScopeInterceptor? scopeInterceptor = null) : IScopeService
 {
-    private readonly IScopeDataSource _scopeDataSource;
-    private readonly IEndUserClientScopeStorage _endUserClientScopeStorage;
-    private readonly IOptions<OAuth20ServerOptions> _options;
-    private readonly IScopeInterceptor? _scopeInterceptor;
-
-    public DefaultScopeService(
-        IScopeDataSource scopeDataSource,
-        IEndUserClientScopeStorage endUserClientScopeStorage,
-        IOptions<OAuth20ServerOptions> options,
-        IScopeInterceptor? scopeInterceptor = null)
-    {
-        _scopeDataSource = scopeDataSource;
-        _endUserClientScopeStorage = endUserClientScopeStorage;
-        _options = options;
-        _scopeInterceptor = scopeInterceptor;
-    }
+    private readonly IScopeDataSource _scopeDataSource = scopeDataSource ?? throw new ArgumentNullException(nameof(scopeDataSource));
+    private readonly IEndUserClientScopeStorage _endUserClientScopeStorage = endUserClientScopeStorage ?? throw new ArgumentNullException(nameof(endUserClientScopeStorage));
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly IScopeInterceptor? _scopeInterceptor = scopeInterceptor;
 
     /// <summary>
     /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-3.3"/>

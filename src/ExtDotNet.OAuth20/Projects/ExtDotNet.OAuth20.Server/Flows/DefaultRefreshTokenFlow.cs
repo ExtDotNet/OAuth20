@@ -14,16 +14,10 @@ namespace ExtDotNet.OAuth20.Server.Flows;
 /// <summary>
 /// Description RFC6749: https://datatracker.ietf.org/doc/html/rfc6749#section-1.5
 /// </summary>
-public class DefaultRefreshTokenFlow : IRefreshTokenFlow
+public class DefaultRefreshTokenFlow(IOptions<OAuth20ServerOptions> options, IErrorResultProvider errorResultProvider) : IRefreshTokenFlow
 {
-    private readonly IOptions<OAuth20ServerOptions> _options;
-    private readonly IErrorResultProvider _errorResultProvider;
-
-    public DefaultRefreshTokenFlow(IOptions<OAuth20ServerOptions> options, IErrorResultProvider errorResultProvider)
-    {
-        _options = options;
-        _errorResultProvider = errorResultProvider;
-    }
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly IErrorResultProvider _errorResultProvider = errorResultProvider ?? throw new ArgumentNullException(nameof(errorResultProvider));
 
     public async Task<IResult> GetTokenAsync(FlowArguments args, Client client)
     {

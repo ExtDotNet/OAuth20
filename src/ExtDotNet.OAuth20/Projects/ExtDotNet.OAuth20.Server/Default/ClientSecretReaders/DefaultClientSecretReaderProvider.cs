@@ -2,25 +2,13 @@
 // ExtDotNet licenses this file to you under the MIT license.
 
 using ExtDotNet.OAuth20.Server.Abstractions.ClientSecretReaders;
+using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.ClientSecretReaders;
 
-public class DefaultClientSecretReaderProvider : IClientSecretReaderProvider
+public class DefaultClientSecretReaderProvider(IEnumerable<IClientSecretReader> clientSecretReaders) : IClientSecretReaderProvider
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IClientSecretReaderMetadataCollection _clientSecretReaderMetadataCollection;
+    private readonly IEnumerable<IClientSecretReader> _clientSecretReaders = clientSecretReaders ?? throw new ArgumentNullException(nameof(clientSecretReaders));
 
-    public DefaultClientSecretReaderProvider(IServiceProvider serviceProvider, IClientSecretReaderMetadataCollection clientSecretReaderMetadataCollection)
-    {
-        _serviceProvider = serviceProvider;
-        _clientSecretReaderMetadataCollection = clientSecretReaderMetadataCollection;
-    }
-
-    public IEnumerable<IClientSecretReader> GetAllClientSecretReaderInstances()
-    {
-        foreach (var clientSecretReaderMetadata in _clientSecretReaderMetadataCollection.ClientSecretReaders)
-        {
-            yield return (IClientSecretReader)_serviceProvider.GetRequiredService(clientSecretReaderMetadata.Value.Abstraction);
-        }
-    }
+    public ValueTask<IEnumerable<IClientSecretReader>> GetAllClientSecretReadersAsync() => ValueTask.FromResult(_clientSecretReaders);
 }

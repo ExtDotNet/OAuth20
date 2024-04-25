@@ -17,42 +17,28 @@ namespace ExtDotNet.OAuth20.Server.Endpoints.Authorization;
 /// <summary>
 /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-3.1"/>
 /// </summary>
-public class DefaultAuthorizationEndpoint : IAuthorizationEndpoint
+public class DefaultAuthorizationEndpoint(
+    IFlowRouter flowRouter,
+    IArgumentsBuilder<FlowArguments> flowArgsBuilder,
+    IRequestValidator<IAuthorizationEndpoint> requestValidator,
+    IErrorResultProvider errorResultProvider,
+    IClientService clientService,
+    ILoginService loginService,
+    IEndUserService endUserService,
+    IScopeService scopeService,
+    IPermissionsService permissionsService,
+    IOptions<OAuth20ServerOptions> options) : IAuthorizationEndpoint
 {
-    private readonly IFlowRouter _flowRouter;
-    private readonly IArgumentsBuilder<FlowArguments> _flowArgsBuilder;
-    private readonly IRequestValidator<IAuthorizationEndpoint> _requestValidator;
-    private readonly IErrorResultProvider _errorResultProvider;
-    private readonly IClientService _clientService;
-    private readonly ILoginService _loginService;
-    private readonly IEndUserService _endUserService;
-    private readonly IScopeService _scopeService;
-    private readonly IPermissionsService _permissionsService;
-    private readonly IOptions<OAuth20ServerOptions> _options;
-
-    public DefaultAuthorizationEndpoint(
-        IFlowRouter flowRouter,
-        IArgumentsBuilder<FlowArguments> flowArgsBuilder,
-        IRequestValidator<IAuthorizationEndpoint> requestValidator,
-        IErrorResultProvider errorResultProvider,
-        IClientService clientService,
-        ILoginService loginService,
-        IEndUserService endUserService,
-        IScopeService scopeService,
-        IPermissionsService permissionsService,
-        IOptions<OAuth20ServerOptions> options)
-    {
-        _flowRouter = flowRouter;
-        _flowArgsBuilder = flowArgsBuilder;
-        _requestValidator = requestValidator;
-        _errorResultProvider = errorResultProvider;
-        _clientService = clientService;
-        _loginService = loginService;
-        _endUserService = endUserService;
-        _scopeService = scopeService;
-        _permissionsService = permissionsService;
-        _options = options;
-    }
+    private readonly IFlowRouter _flowRouter = flowRouter ?? throw new ArgumentNullException(nameof(flowRouter));
+    private readonly IArgumentsBuilder<FlowArguments> _flowArgsBuilder = flowArgsBuilder ?? throw new ArgumentNullException(nameof(flowArgsBuilder));
+    private readonly IRequestValidator<IAuthorizationEndpoint> _requestValidator = requestValidator ?? throw new ArgumentNullException(nameof(requestValidator));
+    private readonly IErrorResultProvider _errorResultProvider = errorResultProvider ?? throw new ArgumentNullException(nameof(errorResultProvider));
+    private readonly IClientService _clientService = clientService ?? throw new ArgumentNullException(nameof(clientService));
+    private readonly ILoginService _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
+    private readonly IEndUserService _endUserService = endUserService ?? throw new ArgumentNullException(nameof(endUserService));
+    private readonly IScopeService _scopeService = scopeService ?? throw new ArgumentNullException(nameof(scopeService));
+    private readonly IPermissionsService _permissionsService = permissionsService ?? throw new ArgumentNullException(nameof(permissionsService));
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     public async Task<IResult> InvokeAsync(HttpContext httpContext)
     {

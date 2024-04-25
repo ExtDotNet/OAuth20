@@ -7,5 +7,5 @@ namespace ExtDotNet.OAuth20.Server.Abstractions.Providers;
 
 public interface IRefreshTokenProvider
 {
-    public Task<string> GetRefreshTokenValueAsync(AccessTokenResult accessToken);
+    public ValueTask<string> GetRefreshTokenValueAsync(AccessTokenResult accessToken);
 }

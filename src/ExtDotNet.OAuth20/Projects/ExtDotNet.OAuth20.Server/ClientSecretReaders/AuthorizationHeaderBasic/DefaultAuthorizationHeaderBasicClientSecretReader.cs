@@ -6,20 +6,15 @@ using ExtDotNet.OAuth20.Server.Abstractions.Errors.Exceptions.Token;
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models.Enums;
+using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace ExtDotNet.OAuth20.Server.ClientSecretReaders.AuthorizationHeaderBasic;
 
-public class DefaultAuthorizationHeaderBasicClientSecretReader : IAuthorizationHeaderBasicClientSecretReader
+public class DefaultAuthorizationHeaderBasicClientSecretReader(IClientService clientService, IClientSecretService clientSecretService) : IAuthorizationHeaderBasicClientSecretReader
 {
-    private readonly IClientService _clientService;
-    private readonly IClientSecretService _clientSecretService;
-
-    public DefaultAuthorizationHeaderBasicClientSecretReader(IClientService clientService, IClientSecretService clientSecretService)
-    {
-        _clientService = clientService;
-        _clientSecretService = clientSecretService;
-    }
+    private readonly IClientService _clientService = clientService ?? throw new ArgumentNullException(nameof(clientService));
+    private readonly IClientSecretService _clientSecretService = clientSecretService ?? throw new ArgumentNullException(nameof(clientSecretService));
 
     public async Task<ClientSecret?> GetClientSecretAsync(HttpContext httpContext)
     {

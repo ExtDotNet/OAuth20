@@ -16,36 +16,24 @@ namespace ExtDotNet.OAuth20.Server.Flows;
 /// <summary>
 /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-4.3"/>
 /// </summary>
-public class DefaultResourceOwnerPasswordCredentialsFlow : IResourceOwnerPasswordCredentialsFlow
+public class DefaultResourceOwnerPasswordCredentialsFlow(
+    IOptions<OAuth20ServerOptions> options,
+    IErrorResultProvider errorResultProvider,
+    IEndUserService endUserService,
+    IFlowService flowService,
+    IClientService clientService,
+    IScopeService scopeService,
+    IAccessTokenService accessTokenService,
+    IRefreshTokenService refreshTokenService) : IResourceOwnerPasswordCredentialsFlow
 {
-    private readonly IOptions<OAuth20ServerOptions> _options;
-    private readonly IErrorResultProvider _errorResultProvider;
-    private readonly IEndUserService _endUserService;
-    private readonly IFlowService _flowService;
-    private readonly IClientService _clientService;
-    private readonly IScopeService _scopeService;
-    private readonly IAccessTokenService _accessTokenService;
-    private readonly IRefreshTokenService _refreshTokenService;
-
-    public DefaultResourceOwnerPasswordCredentialsFlow(
-        IOptions<OAuth20ServerOptions> options,
-        IErrorResultProvider errorResultProvider,
-        IEndUserService endUserService,
-        IFlowService flowService,
-        IClientService clientService,
-        IScopeService scopeService,
-        IAccessTokenService accessTokenService,
-        IRefreshTokenService refreshTokenService)
-    {
-        _options = options;
-        _errorResultProvider = errorResultProvider;
-        _endUserService = endUserService;
-        _flowService = flowService;
-        _clientService = clientService;
-        _scopeService = scopeService;
-        _accessTokenService = accessTokenService;
-        _refreshTokenService = refreshTokenService;
-    }
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly IErrorResultProvider _errorResultProvider = errorResultProvider ?? throw new ArgumentNullException(nameof(errorResultProvider));
+    private readonly IEndUserService _endUserService = endUserService ?? throw new ArgumentNullException(nameof(endUserService));
+    private readonly IFlowService _flowService = flowService ?? throw new ArgumentNullException(nameof(flowService));
+    private readonly IClientService _clientService = clientService ?? throw new ArgumentNullException(nameof(clientService));
+    private readonly IScopeService _scopeService = scopeService ?? throw new ArgumentNullException(nameof(scopeService));
+    private readonly IAccessTokenService _accessTokenService = accessTokenService ?? throw new ArgumentNullException(nameof(accessTokenService));
+    private readonly IRefreshTokenService _refreshTokenService = refreshTokenService ?? throw new ArgumentNullException(nameof(refreshTokenService));
 
     public async Task<IResult> GetTokenAsync(FlowArguments args, Client client)
     {

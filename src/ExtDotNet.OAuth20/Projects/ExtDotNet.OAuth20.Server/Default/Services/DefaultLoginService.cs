@@ -10,24 +10,16 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultLoginService : ILoginService
+public class DefaultLoginService(
+    IOptions<OAuth20ServerOptions> options,
+    IClientService clientService,
+    IErrorResultProvider errorResultProvider,
+    IServerMetadataService serverMetadataService) : ILoginService
 {
-    private readonly IOptions<OAuth20ServerOptions> _options;
-    private readonly IClientService _clientService;
-    private readonly IErrorResultProvider _errorResultProvider;
-    private readonly IServerMetadataService _serverMetadataService;
-
-    public DefaultLoginService(
-        IOptions<OAuth20ServerOptions> options,
-        IClientService clientService,
-        IErrorResultProvider errorResultProvider,
-        IServerMetadataService serverMetadataService)
-    {
-        _options = options;
-        _clientService = clientService;
-        _errorResultProvider = errorResultProvider;
-        _serverMetadataService = serverMetadataService;
-    }
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly IClientService _clientService = clientService ?? throw new ArgumentNullException(nameof(clientService));
+    private readonly IErrorResultProvider _errorResultProvider = errorResultProvider ?? throw new ArgumentNullException(nameof(errorResultProvider));
+    private readonly IServerMetadataService _serverMetadataService = serverMetadataService ?? throw new ArgumentNullException(nameof(serverMetadataService));
 
     public async Task<IResult> RedirectToLoginAsync(FlowArguments args)
     {

@@ -12,27 +12,18 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultPermissionsService : IPermissionsService
+public class DefaultPermissionsService(
+    IOptions<OAuth20ServerOptions> options,
+    IErrorResultProvider errorResultProvider,
+    IServerMetadataService serverMetadataService,
+    IScopeService scopeService,
+    IEndUserClientScopeStorage endUserClientScopeStorage) : IPermissionsService
 {
-    private readonly IOptions<OAuth20ServerOptions> _options;
-    private readonly IErrorResultProvider _errorResultProvider;
-    private readonly IServerMetadataService _serverMetadataService;
-    private readonly IScopeService _scopeService;
-    private readonly IEndUserClientScopeStorage _endUserClientScopeStorage;
-
-    public DefaultPermissionsService(
-        IOptions<OAuth20ServerOptions> options,
-        IErrorResultProvider errorResultProvider,
-        IServerMetadataService serverMetadataService,
-        IScopeService scopeService,
-        IEndUserClientScopeStorage endUserClientScopeStorage)
-    {
-        _options = options;
-        _errorResultProvider = errorResultProvider;
-        _serverMetadataService = serverMetadataService;
-        _scopeService = scopeService;
-        _endUserClientScopeStorage = endUserClientScopeStorage;
-    }
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly IErrorResultProvider _errorResultProvider = errorResultProvider ?? throw new ArgumentNullException(nameof(errorResultProvider));
+    private readonly IServerMetadataService _serverMetadataService = serverMetadataService ?? throw new ArgumentNullException(nameof(serverMetadataService));
+    private readonly IScopeService _scopeService = scopeService ?? throw new ArgumentNullException(nameof(scopeService));
+    private readonly IEndUserClientScopeStorage _endUserClientScopeStorage = endUserClientScopeStorage ?? throw new ArgumentNullException(nameof(endUserClientScopeStorage));
 
     public async Task<bool> RedirectToPermissionsRequiredAsync(EndUser endUser, Client client)
     {

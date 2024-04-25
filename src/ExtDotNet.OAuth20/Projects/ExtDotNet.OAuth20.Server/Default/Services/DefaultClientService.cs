@@ -13,34 +13,24 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultClientService : IClientService
+public class DefaultClientService(
+    IClientDataSource clientDataSource,
+    IFlowService flowService,
+    ITokenTypeDataSource tokenTypeDataSource,
+    IOptions<OAuth20ServerOptions> options) : IClientService
 {
-    private readonly IClientDataSource _clientDataSource;
-    private readonly IFlowService _flowService;
-    private readonly ITokenTypeDataSource _tokenTypeDataSource;
-    private readonly IOptions<OAuth20ServerOptions> _options;
-
-    public DefaultClientService(
-        IClientDataSource clientDataSource,
-        IFlowService flowService,
-        ITokenTypeDataSource tokenTypeDataSource,
-        IOptions<OAuth20ServerOptions> options)
-    {
-        _clientDataSource = clientDataSource;
-        _flowService = flowService;
-        _tokenTypeDataSource = tokenTypeDataSource;
-        _options = options;
-    }
+    private readonly IClientDataSource _clientDataSource = clientDataSource ?? throw new ArgumentNullException(nameof(clientDataSource));
+    private readonly IFlowService _flowService = flowService ?? throw new ArgumentNullException(nameof(flowService));
+    private readonly ITokenTypeDataSource _tokenTypeDataSource = tokenTypeDataSource ?? throw new ArgumentNullException(nameof(tokenTypeDataSource));
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     public async Task<Client?> GetClientAsync(string clientId)
     {
         return await _clientDataSource.GetClientAsync(clientId).ConfigureAwait(false);
     }
 
-    public async Task<Client> GetClientAsync(ClientSecret clientSecret)
-    {
-        return await _clientDataSource.GetClientAsync(clientSecret).ConfigureAwait(false);
-    }
+    public async Task<Client> GetClientAsync(ClientSecret clientSecret) =>
+        await _clientDataSource.GetClientAsync(clientSecret).ConfigureAwait(false);
 
     public async Task<TokenType> GetTokenType(Client client)
     {

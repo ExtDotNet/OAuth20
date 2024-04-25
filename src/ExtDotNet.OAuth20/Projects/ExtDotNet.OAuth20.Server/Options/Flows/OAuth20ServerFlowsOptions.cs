@@ -29,5 +29,9 @@ public class OAuth20ServerFlowsOptions
 
     public string? RefreshTokenFlowGrantTypeName { get; set; }
 
+    public string? AuthorizationCodeEncryptionKey { get; set; }
+
+    public string? RefreshTokenEncryptionKey { get; set; }
+
     public IEnumerable<FlowOptions>? FlowList { get; set; }
 }

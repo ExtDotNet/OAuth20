@@ -7,5 +7,5 @@ namespace ExtDotNet.OAuth20.Server.Abstractions.TokenBuilders;
 
 public interface ITokenBuilder
 {
-    public Task<string> BuildTokenAsync(TokenContext tokenBuilderContext);
+    public ValueTask<string> BuildTokenAsync(TokenContext tokenBuilderContext);
 }

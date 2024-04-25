@@ -16,39 +16,26 @@ namespace ExtDotNet.OAuth20.Server.Flows;
 /// <summary>
 /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-4.2"/>
 /// </summary>
-public class DefaultImplicitFlow : IImplicitFlow
+public class DefaultImplicitFlow(
+    IOptions<OAuth20ServerOptions> options,
+    IErrorResultProvider errorResultProvider,
+    IEndUserService endUserService,
+    ILoginService loginService,
+    IClientService clientService,
+    IFlowService flowService,
+    IScopeService scopeService,
+    IAccessTokenService accessTokenService,
+    IPermissionsService permissionsService) : IImplicitFlow
 {
-    private readonly IOptions<OAuth20ServerOptions> _options;
-    private readonly IErrorResultProvider _errorResultProvider;
-    private readonly IEndUserService _endUserService;
-    private readonly ILoginService _loginService;
-    private readonly IClientService _clientService;
-    private readonly IFlowService _flowService;
-    private readonly IScopeService _scopeService;
-    private readonly IAccessTokenService _accessTokenService;
-    private readonly IPermissionsService _permissionsService;
-
-    public DefaultImplicitFlow(
-        IOptions<OAuth20ServerOptions> options,
-        IErrorResultProvider errorResultProvider,
-        IEndUserService endUserService,
-        ILoginService loginService,
-        IClientService clientService,
-        IFlowService flowService,
-        IScopeService scopeService,
-        IAccessTokenService accessTokenService,
-        IPermissionsService permissionsService)
-    {
-        _options = options;
-        _errorResultProvider = errorResultProvider;
-        _endUserService = endUserService;
-        _loginService = loginService;
-        _clientService = clientService;
-        _flowService = flowService;
-        _scopeService = scopeService;
-        _accessTokenService = accessTokenService;
-        _permissionsService = permissionsService;
-    }
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly IErrorResultProvider _errorResultProvider = errorResultProvider ?? throw new ArgumentNullException(nameof(errorResultProvider));
+    private readonly IEndUserService _endUserService = endUserService ?? throw new ArgumentNullException(nameof(endUserService));
+    private readonly ILoginService _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
+    private readonly IClientService _clientService = clientService ?? throw new ArgumentNullException(nameof(clientService));
+    private readonly IFlowService _flowService = flowService ?? throw new ArgumentNullException(nameof(flowService));
+    private readonly IScopeService _scopeService = scopeService ?? throw new ArgumentNullException(nameof(scopeService));
+    private readonly IAccessTokenService _accessTokenService = accessTokenService ?? throw new ArgumentNullException(nameof(accessTokenService));
+    private readonly IPermissionsService _permissionsService = permissionsService ?? throw new ArgumentNullException(nameof(permissionsService));
 
     public async Task<IResult> AuthorizeAsync(FlowArguments args, Client client, EndUser endUser, ScopeResult scopeResult)
     {

@@ -17,39 +17,26 @@ namespace ExtDotNet.OAuth20.Server.Flows;
 /// <summary>
 /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-4.1"/>
 /// </summary>
-public class DefaultAuthorizationCodeFlow : IAuthorizationCodeFlow
+public class DefaultAuthorizationCodeFlow(
+    IOptions<OAuth20ServerOptions> options,
+    IErrorResultProvider errorResultProvider,
+    IEndUserService endUserService,
+    IClientService clientService,
+    IScopeService scopeService,
+    IAuthorizationCodeService authorizationCodeService,
+    IRefreshTokenService refreshTokenService,
+    IFlowService flowService,
+    IPermissionsService permissionsService) : IAuthorizationCodeFlow
 {
-    private readonly IOptions<OAuth20ServerOptions> _options;
-    private readonly IErrorResultProvider _errorResultProvider;
-    private readonly IEndUserService _endUserService;
-    private readonly IClientService _clientService;
-    private readonly IScopeService _scopeService;
-    private readonly IAuthorizationCodeService _authorizationCodeService;
-    private readonly IRefreshTokenService _refreshTokenService;
-    private readonly IFlowService _flowService;
-    private readonly IPermissionsService _permissionsService;
-
-    public DefaultAuthorizationCodeFlow(
-        IOptions<OAuth20ServerOptions> options,
-        IErrorResultProvider errorResultProvider,
-        IEndUserService endUserService,
-        IClientService clientService,
-        IScopeService scopeService,
-        IAuthorizationCodeService authorizationCodeService,
-        IRefreshTokenService refreshTokenService,
-        IFlowService flowService,
-        IPermissionsService permissionsService)
-    {
-        _options = options;
-        _errorResultProvider = errorResultProvider;
-        _endUserService = endUserService;
-        _clientService = clientService;
-        _scopeService = scopeService;
-        _authorizationCodeService = authorizationCodeService;
-        _refreshTokenService = refreshTokenService;
-        _flowService = flowService;
-        _permissionsService = permissionsService;
-    }
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly IErrorResultProvider _errorResultProvider = errorResultProvider ?? throw new ArgumentNullException(nameof(errorResultProvider));
+    private readonly IEndUserService _endUserService = endUserService ?? throw new ArgumentNullException(nameof(endUserService));
+    private readonly IClientService _clientService = clientService ?? throw new ArgumentNullException(nameof(clientService));
+    private readonly IScopeService _scopeService = scopeService ?? throw new ArgumentNullException(nameof(scopeService));
+    private readonly IAuthorizationCodeService _authorizationCodeService = authorizationCodeService ?? throw new ArgumentNullException(nameof(authorizationCodeService));
+    private readonly IRefreshTokenService _refreshTokenService = refreshTokenService ?? throw new ArgumentNullException(nameof(refreshTokenService));
+    private readonly IFlowService _flowService = flowService ?? throw new ArgumentNullException(nameof(flowService));
+    private readonly IPermissionsService _permissionsService = permissionsService ?? throw new ArgumentNullException(nameof(permissionsService));
 
     public async Task<IResult> AuthorizeAsync(FlowArguments args, Client client, EndUser endUser, ScopeResult scopeResult)
     {

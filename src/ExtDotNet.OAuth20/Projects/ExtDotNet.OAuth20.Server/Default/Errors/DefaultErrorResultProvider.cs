@@ -11,16 +11,10 @@ using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Errors;
 
-public class DefaultErrorResultProvider : IErrorResultProvider
+public class DefaultErrorResultProvider(IErrorMetadataCollection errorMetadataCollection, IOptions<OAuth20ServerOptions> options) : IErrorResultProvider
 {
-    private readonly IErrorMetadataCollection _errorMetadataCollection;
-    private readonly IOptions<OAuth20ServerOptions> _options;
-
-    public DefaultErrorResultProvider(IErrorMetadataCollection errorMetadataCollection, IOptions<OAuth20ServerOptions> options)
-    {
-        _errorMetadataCollection = errorMetadataCollection;
-        _options = options;
-    }
+    private readonly IErrorMetadataCollection _errorMetadataCollection = errorMetadataCollection ?? throw new ArgumentNullException(nameof(errorMetadataCollection));
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     public IResult GetErrorResult(OAuth20Exception exception)
     {

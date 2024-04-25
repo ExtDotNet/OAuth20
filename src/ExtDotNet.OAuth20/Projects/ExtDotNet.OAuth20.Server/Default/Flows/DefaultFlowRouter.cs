@@ -2,17 +2,13 @@
 // ExtDotNet licenses this file to you under the MIT license.
 
 using ExtDotNet.OAuth20.Server.Abstractions.Flows;
+using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Default.Flows;
 
-public class DefaultFlowRouter : IFlowRouter
+public class DefaultFlowRouter(IFlowProvider flowProvider) : IFlowRouter
 {
-    private readonly IFlowProvider _flowProvider;
-
-    public DefaultFlowRouter(IFlowProvider flowProvider)
-    {
-        _flowProvider = flowProvider;
-    }
+    private readonly IFlowProvider _flowProvider = flowProvider ?? throw new ArgumentNullException(nameof(flowProvider));
 
     public bool TryGetAuthorizeFlow(string responseType, out IAuthorizeFlow? authorizeFlow)
     {

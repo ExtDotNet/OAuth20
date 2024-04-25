@@ -9,18 +9,13 @@ using System.Text;
 
 namespace ExtDotNet.OAuth20.Server.Default.Services;
 
-public class DefaultPasswordHashingService : IPasswordHashingService
+public class DefaultPasswordHashingService(IOptions<OAuth20ServerOptions> options) : IPasswordHashingService
 {
-    private readonly IOptions<OAuth20ServerOptions> _options;
+    private readonly IOptions<OAuth20ServerOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
-    public DefaultPasswordHashingService(IOptions<OAuth20ServerOptions> options)
+    public ValueTask<string?> GetPasswordHashAsync(string? password)
     {
-        _options = options;
-    }
-
-    public Task<string?> GetPasswordHashAsync(string? password)
-    {
-        if (string.IsNullOrWhiteSpace(password)) return Task.FromResult<string?>(null);
+        if (string.IsNullOrWhiteSpace(password)) return ValueTask.FromResult<string?>(null);
 
         string originSalt = _options.Value.PasswordHashingSalt ?? nameof(DefaultPasswordHashingService);
 
@@ -43,6 +38,6 @@ public class DefaultPasswordHashingService : IPasswordHashingService
 
         string passwordHash = builder.ToString();
 
-        return Task.FromResult<string?>(passwordHash);
+        return ValueTask.FromResult<string?>(passwordHash);
     }
 }

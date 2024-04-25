@@ -10,7 +10,6 @@ public static class OAuth20ApplicationBuilderExtensions
     public static IApplicationBuilder UseOAuth20Server(this IApplicationBuilder app)
     {
         app.UseMiddleware<OAuth20ServerEndpointsMiddleware>();
-        app.UseMiddleware<OAuth20ServerWebPagesMiddleware>();
 
         return app;
     }

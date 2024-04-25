@@ -4,17 +4,13 @@
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models.Enums;
+using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.ClientSecretReaders.TlsCertificate;
 
-public class DefaultTlsCertificateClientSecretReader : ITlsCertificateClientSecretReader
+public class DefaultTlsCertificateClientSecretReader(IClientSecretService clientSecretService) : ITlsCertificateClientSecretReader
 {
-    private readonly IClientSecretService _clientSecretService;
-
-    public DefaultTlsCertificateClientSecretReader(IClientSecretService clientSecretService)
-    {
-        _clientSecretService = clientSecretService;
-    }
+    private readonly IClientSecretService _clientSecretService = clientSecretService ?? throw new ArgumentNullException(nameof(clientSecretService));
 
     public async Task<ClientSecret?> GetClientSecretAsync(HttpContext httpContext)
     {
@@ -24,10 +20,7 @@ public class DefaultTlsCertificateClientSecretReader : ITlsCertificateClientSecr
             .GetClientCertificateAsync()
             .ConfigureAwait(false);
 
-        if (clientCertificate is null)
-        {
-            return clientSecret;
-        }
+        if (clientCertificate is null) return clientSecret;
 
         string clientSecretContent = clientCertificate.GetRawCertDataString();
 

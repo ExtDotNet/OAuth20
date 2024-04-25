@@ -1,17 +1,19 @@
 ﻿// Developed and maintained by ExtDotNet.
 // ExtDotNet licenses this file to you under the MIT license.
 
+using ExtDotNet.OAuth20.Server.Abstractions;
+
 using ExtDotNet.OAuth20.Server.Abstractions.DataSources;
 using ExtDotNet.OAuth20.Server.Abstractions.DataStorages;
-using ExtDotNet.OAuth20.Server.Abstractions;
+using ExtDotNet.OAuth20.Server.Abstractions.Providers;
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Default;
+using ExtDotNet.OAuth20.Server.Default.Providers;
+
 using ExtDotNet.OAuth20.Server.Default.Services;
 using ExtDotNet.OAuth20.Server.Options;
 using ExtDotNet.OAuth20.Server.ServiceCollections;
 using Microsoft.Extensions.Options;
-using ExtDotNet.OAuth20.Server.Abstractions.Providers;
-using ExtDotNet.OAuth20.Server.Default.Providers;
 
 namespace ExtDotNet.OAuth20.Server;
 
@@ -29,6 +31,7 @@ public static class OAuth20ServiceCollectionExtensions
         services.SetOAuth20DataSources(dataSourceContext);
         services.SetOAuth20DataStorages(dataStorageContext);
 
+        // TODO: refactor all these methods below:
         services.SetOAuth20Endpoints();
         services.SetOAuth20Flows();
         services.SetOAuth20Errors();
@@ -38,7 +41,6 @@ public static class OAuth20ServiceCollectionExtensions
         // TODO: make up a more advanced solution
         services.SetOAuth20ServerSigningCredentials(useSelfSignedSigningCredentials);
         services.SetOAuth20ServerInformation();
-        services.SetOAuth20WebPageBuilderServices();
 
         services.AddScoped<ITlsValidator, DefaultTlsValidator>();
 
@@ -70,7 +72,7 @@ public static class OAuth20ServiceCollectionExtensions
 
     public static IServiceCollection AddProviders(this IServiceCollection services)
     {
-        services.AddScoped<IAuthorizationCodeProvider, EncryptedGuidAuthorizationCodeProvider>();
+        services.AddSingleton<IAuthorizationCodeProvider, EncryptedGuidAuthorizationCodeProvider>();
         services.AddScoped<ITokenProvider, DefaultTokenProvider>();
         services.AddScoped<IRefreshTokenProvider, EncryptedGuidRefreshTokenProvider>();
 

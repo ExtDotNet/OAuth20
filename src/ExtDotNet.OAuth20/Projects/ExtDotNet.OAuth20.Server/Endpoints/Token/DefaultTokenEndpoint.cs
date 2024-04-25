@@ -8,33 +8,25 @@ using ExtDotNet.OAuth20.Server.Abstractions.Flows;
 using ExtDotNet.OAuth20.Server.Abstractions.Services;
 using ExtDotNet.OAuth20.Server.Domain;
 using ExtDotNet.OAuth20.Server.Models.Flows;
+using Microsoft.Extensions.Options;
 
 namespace ExtDotNet.OAuth20.Server.Endpoints.Token;
 
 /// <summary>
 /// Description RFC6749: <see cref="https://datatracker.ietf.org/doc/html/rfc6749#section-3.2"/>
 /// </summary>
-public class DefaultTokenEndpoint : ITokenEndpoint
+public class DefaultTokenEndpoint(
+    IFlowRouter flowRouter,
+    IArgumentsBuilder<FlowArguments> flowArgsBuilder,
+    IRequestValidator<ITokenEndpoint> requestValidator,
+    IErrorResultProvider errorResultProvider,
+    IClientAuthenticationService clientAuthenticationService) : ITokenEndpoint
 {
-    private readonly IFlowRouter _flowRouter;
-    private readonly IArgumentsBuilder<FlowArguments> _flowArgsBuilder;
-    private readonly IRequestValidator<ITokenEndpoint> _requestValidator;
-    private readonly IErrorResultProvider _errorResultProvider;
-    private readonly IClientAuthenticationService _clientAuthenticationService;
-
-    public DefaultTokenEndpoint(
-        IFlowRouter flowRouter,
-        IArgumentsBuilder<FlowArguments> flowArgsBuilder,
-        IRequestValidator<ITokenEndpoint> requestValidator,
-        IErrorResultProvider errorResultProvider,
-        IClientAuthenticationService clientAuthenticationService)
-    {
-        _flowRouter = flowRouter;
-        _flowArgsBuilder = flowArgsBuilder;
-        _requestValidator = requestValidator;
-        _errorResultProvider = errorResultProvider;
-        _clientAuthenticationService = clientAuthenticationService;
-    }
+    private readonly IFlowRouter _flowRouter = flowRouter ?? throw new ArgumentNullException(nameof(flowRouter));
+    private readonly IArgumentsBuilder<FlowArguments> _flowArgsBuilder = flowArgsBuilder ?? throw new ArgumentNullException(nameof(flowArgsBuilder));
+    private readonly IRequestValidator<ITokenEndpoint> _requestValidator = requestValidator ?? throw new ArgumentNullException(nameof(requestValidator));
+    private readonly IErrorResultProvider _errorResultProvider = errorResultProvider ?? throw new ArgumentNullException(nameof(errorResultProvider));
+    private readonly IClientAuthenticationService _clientAuthenticationService = clientAuthenticationService ?? throw new ArgumentNullException(nameof(clientAuthenticationService));
 
     public async Task<IResult> InvokeAsync(HttpContext httpContext)
     {
