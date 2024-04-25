@@ -12,7 +12,7 @@ public class ClientSecretEntityOptions
 
     public string? Title { get; set; }
 
-    public string? Desription { get; set; }
+    public string? Description { get; set; }
 
     [Required]
     public string ClientSecretType { get; set; } = default!;
