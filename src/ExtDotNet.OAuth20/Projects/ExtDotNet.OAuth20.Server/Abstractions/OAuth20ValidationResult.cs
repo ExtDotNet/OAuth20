@@ -7,7 +7,5 @@ public class OAuth20ValidationResult
 {
     public bool Success { get; set; }
 
-    public string? Status { get; set; }
-
     public string? Description { get; set; }
 }
