@@ -34,6 +34,8 @@ public static class OAuth20ServiceCollectionExtensions
         services.SetOAuth20Errors();
         services.SetOAuth20TokenTypes();
         services.SetOAuth20ClientSecretTypes();
+
+        // TODO: make up a more advanced solution
         services.SetOAuth20ServerSigningCredentials(useSelfSignedSigningCredentials);
         services.SetOAuth20ServerInformation();
         services.SetOAuth20WebPageBuilderServices();

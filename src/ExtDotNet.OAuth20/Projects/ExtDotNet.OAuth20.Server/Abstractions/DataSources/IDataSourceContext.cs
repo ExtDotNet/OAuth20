@@ -3,6 +3,7 @@
 
 namespace ExtDotNet.OAuth20.Server.Abstractions.DataSources;
 
+// TODO: rework to registration using method and builder
 public interface IDataSourceContext
 {
     public Type ClientDataSourceType { get; set; }

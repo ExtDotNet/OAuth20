@@ -3,6 +3,7 @@
 
 namespace ExtDotNet.OAuth20.Server.Abstractions.DataStorages;
 
+// TODO: rework to registration using method and builder
 public interface IDataStorageContext
 {
     public Type AccessTokenStorageType { get; set; }
